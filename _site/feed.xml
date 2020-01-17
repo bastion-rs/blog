@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Your blog title goes here</title>
+    <description>Your blog description
+</description>
+    <link>http://localhost:4000/blog/</link>
+    <atom:link href="http://localhost:4000/blog/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Fri, 17 Jan 2020 13:21:59 +0100</pubDate>
+    <lastBuildDate>Fri, 17 Jan 2020 13:21:59 +0100</lastBuildDate>
+    <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>This is a post placeholder</title>
+        <description>&lt;p&gt;Here is a boilerplate you can modify to write your first blog post !&lt;/p&gt;
+
+&lt;p&gt;All of the &lt;a href=&quot;https://guides.github.com/features/mastering-markdown/&quot;&gt;markdown rules&lt;/a&gt; apply here.&lt;/p&gt;
+
+&lt;p&gt;For example, you can write something in &lt;em&gt;italic&lt;/em&gt; like this, you can write in &lt;strong&gt;bold&lt;/strong&gt; like that.&lt;/p&gt;
+
+&lt;h1 id=&quot;this-is-an-h1-big-title&quot;&gt;This is an h1 (big) title&lt;/h1&gt;
+
+&lt;h2 id=&quot;this-title-is-a-bit-smaller&quot;&gt;This title is a bit smaller&lt;/h2&gt;
+
+&lt;h3 id=&quot;this-one-is-even-more-smaller-etc&quot;&gt;This one is even more smaller etc.&lt;/h3&gt;
+
+&lt;p&gt;Don’t hesitate and visit &lt;a href=&quot;https://guides.github.com/features/mastering-markdown/&quot;&gt;mastering-markdown&lt;/a&gt; to get more information !&lt;/p&gt;
+
+&lt;h1 id=&quot;the-name-of-the-file-is-important-&quot;&gt;The name of the file is important !&lt;/h1&gt;
+&lt;p&gt;This will generate the url, and complete the blog post meta informations (Such as the date for example).&lt;/p&gt;
+
+&lt;p&gt;A relevant page name, which matches the title pretty well might help &lt;a href=&quot;https://en.wikipedia.org/wiki/Search_engine_optimization&quot;&gt;Search Engine Optimization&lt;/a&gt; (Making sure the post is well referenced on search engines)&lt;/p&gt;
+</description>
+        <pubDate>Fri, 17 Jan 2020 00:00:00 +0100</pubDate>
+        <link>http://localhost:4000/blog/2020/01/17/blog-post-placeholder.html</link>
+        <guid isPermaLink="true">http://localhost:4000/blog/2020/01/17/blog-post-placeholder.html</guid>
+        
+        
+      </item>
+    
+  </channel>
+</rss>
