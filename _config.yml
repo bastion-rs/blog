@@ -1,8 +1,8 @@
 # Site settings
-title: Your blog title goes here
+title: Bastion-rs blog
 description: >
-  Your blog description
-baseurl: "/blog"
+  Welcome to the official bastion-rs blog!
+baseurl: "/"
 url: "https://bastion-rs"
 logo: "https://raw.githubusercontent.com/bastion-rs/bastion-rs.github.io/master/src/assets/images/bastion-logo.png"
 twitter_username: bastion_rs
