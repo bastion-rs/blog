@@ -3,7 +3,7 @@
 This is the code that powers [the bastion-rs blog]. It is running
 on [GitHub pages].
 
-[My Blog]: https://bastion-rs/blog
+[the bastion-rs blog]: https://blog.bastion.rs
 [GitHub pages]: https://pages.github.com/
 
 This project has been forked from [the blog boilerplate](https://github.com/rust-community/rust-lang-blog-boilerplate), which has been forked from the awesome [github repo](https://github.com/rust-lang/blog.rust-lang.org) of the [RustLang blog](https://blog.rust-lang.org/)

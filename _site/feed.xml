@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Your blog title goes here</title>
-    <description>Your blog description
+    <title>Bastion-rs blog</title>
+    <description>Welcome to the official bastion-rs blog!
 </description>
-    <link>http://localhost:4000/blog/</link>
-    <atom:link href="http://localhost:4000/blog/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 17 Jan 2020 13:21:59 +0100</pubDate>
-    <lastBuildDate>Fri, 17 Jan 2020 13:21:59 +0100</lastBuildDate>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Fri, 17 Jan 2020 17:33:27 +0100</pubDate>
+    <lastBuildDate>Fri, 17 Jan 2020 17:33:27 +0100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -32,8 +32,8 @@
 &lt;p&gt;A relevant page name, which matches the title pretty well might help &lt;a href=&quot;https://en.wikipedia.org/wiki/Search_engine_optimization&quot;&gt;Search Engine Optimization&lt;/a&gt; (Making sure the post is well referenced on search engines)&lt;/p&gt;
 </description>
         <pubDate>Fri, 17 Jan 2020 00:00:00 +0100</pubDate>
-        <link>http://localhost:4000/blog/2020/01/17/blog-post-placeholder.html</link>
-        <guid isPermaLink="true">http://localhost:4000/blog/2020/01/17/blog-post-placeholder.html</guid>
+        <link>http://localhost:4000/2020/01/17/blog-post-placeholder.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/01/17/blog-post-placeholder.html</guid>
         
         
       </item>
