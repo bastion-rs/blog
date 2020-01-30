@@ -6,34 +6,183 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 17 Jan 2020 17:33:27 +0100</pubDate>
-    <lastBuildDate>Fri, 17 Jan 2020 17:33:27 +0100</lastBuildDate>
+    <pubDate>Thu, 30 Jan 2020 21:39:43 +0100</pubDate>
+    <lastBuildDate>Thu, 30 Jan 2020 21:39:43 +0100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
-        <title>This is a post placeholder</title>
-        <description>&lt;p&gt;Here is a boilerplate you can modify to write your first blog post !&lt;/p&gt;
+        <title>New age of Bastion</title>
+        <description>&lt;p&gt;&lt;strong&gt;Disclaimer:&lt;/strong&gt; This post is not only an announcement of new features of Bastion, which comes with 0.3.4; it also declares our future perspective for the project.&lt;/p&gt;
 
-&lt;p&gt;All of the &lt;a href=&quot;https://guides.github.com/features/mastering-markdown/&quot;&gt;markdown rules&lt;/a&gt; apply here.&lt;/p&gt;
+&lt;p&gt;So we had a long way since our project had started in June 2019. Right now, we are evolving from a runtime that enables fault-recovery for your server-side applications to an agnostic runtime, which has its executor but also works with other executors. Since the beginning we can interoperate with &lt;a href=&quot;https://async.rs&quot;&gt;async-std&lt;/a&gt; without the hassle.&lt;/p&gt;
 
-&lt;p&gt;For example, you can write something in &lt;em&gt;italic&lt;/em&gt; like this, you can write in &lt;strong&gt;bold&lt;/strong&gt; like that.&lt;/p&gt;
+&lt;p&gt;We have started with an idea of runtime, which can recover from failures in the application domain, no matter what happens. Async/await landed, and we got stronger and well known in the community. Then Bastion deployed to AWS lambdas, did, and still doing its job in data processing pipelines. Benchmarks of sparse queries outperformed plenty of sparse queries and aggregations over NYC taxi data in various inmem benchmarks.&lt;/p&gt;
 
-&lt;h1 id=&quot;this-is-an-h1-big-title&quot;&gt;This is an h1 (big) title&lt;/h1&gt;
+&lt;p&gt;Where futures-executor performs:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;test count_aggregation      ... bench: 108,916,527 ns/iter (+/- 11,909,528)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Bastion performed:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;test count_aggregation      ... bench: 87,096,485 ns/iter (+/- 3,874,812)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Everything started with an idea of replicating what Erlang does in its runtime. Having the idea of using the runtime for data processing came right after it. Bastion’s purpose is to provide a generic runtime for fault-tolerant middlewares, distributed systems, and data processing pipelines.&lt;/p&gt;
 
-&lt;h2 id=&quot;this-title-is-a-bit-smaller&quot;&gt;This title is a bit smaller&lt;/h2&gt;
+&lt;p&gt;I didn’t aim for faster runtime, but I aimed to exploit the whole resources whenever it’s possible. Bastion also doesn’t aim to replace every other existing runtimes. It just unfolds a different approach to design systems. This system design is very graspable for the people who come from a functional background like Scala, Erlang, or Haskell. When we released Bastion 0.1 in June 2019 with Tokio runtime, I realized that it’s not the way that this project can continue. With premature design assumptions of the runtime, I struggled with developing the project with Tokio runtime. Having to implement a monolithic runtime with several lack of reduction based concurrency principles made me write an executor for Bastion. So we end up having a multiple run queue based, redundancy statistics sampled, async executor which is a primer of the runtime. Throughout time, people wanted to use blocking tasks also. So we came with an idea of using an adaptive blocking pool, which can &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html&quot;&gt;automatically scale the resources based on the throughput&lt;/a&gt; and prevents IO hogs.&lt;/p&gt;
 
-&lt;h3 id=&quot;this-one-is-even-more-smaller-etc&quot;&gt;This one is even more smaller etc.&lt;/h3&gt;
+&lt;h2 id=&quot;what-is-next-with-bastion&quot;&gt;What is next with Bastion?&lt;/h2&gt;
 
-&lt;p&gt;Don’t hesitate and visit &lt;a href=&quot;https://guides.github.com/features/mastering-markdown/&quot;&gt;mastering-markdown&lt;/a&gt; to get more information !&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;We are currently working on being runtime agnostic. Working in everywhere but still supplying our own executor to the people who want to have fault-tolerant systems in their projects.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;We are exploring HCS(Hot code swap) case. And currently, we have &lt;a href=&quot;https://github.com/bastion-rs/bastion/issues/103&quot;&gt;design discussions&lt;/a&gt; going on. We would be really happy to gather your feedback and ideas on HCS!&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;WASM is a rising star in the ecosystem. We would like to support it, first we want to make everything &lt;code class=&quot;highlighter-rouge&quot;&gt;#[no_std]&lt;/code&gt;, then we want to move towards to make Bastion projects compile for WASM.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;We are working on Bastion Streams! A streaming framework implementation which is backpressure aware and works with a push interface like API. Many people are asking about how this will be implemented, and I have pretty concrete ideas about this. Especially from the perspective of Rust! So now I am quite bit busy enabling parallel streams in Rust. &lt;strong&gt;Not with &lt;a href=&quot;https://docs.rs/futures/0.3.1/futures/stream/trait.Stream.html&quot;&gt;this&lt;/a&gt;, or &lt;a href=&quot;https://rust-lang.github.io/async-book/05_streams/01_chapter.html&quot;&gt;this&lt;/a&gt;, or via &lt;a href=&quot;https://rust-lang.github.io/async-book/06_multiple_futures/03_select.html&quot;&gt;this&lt;/a&gt;&lt;/strong&gt;. Come join us if you find this interesting!&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Distributed properties are still needs to be solved. We are slow at that side but wrote initial epidemic protocol implementation
+We aren’t moving too fast on this, but an initial epidemic protocol implementation can be seen and used in our &lt;a href=&quot;http://github.com/bastion-rs/artillery&quot;&gt;Artillery&lt;/a&gt; repository.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;h1 id=&quot;the-name-of-the-file-is-important-&quot;&gt;The name of the file is important !&lt;/h1&gt;
-&lt;p&gt;This will generate the url, and complete the blog post meta informations (Such as the date for example).&lt;/p&gt;
+&lt;h2 id=&quot;new-version-is-in-here-tell-me-more&quot;&gt;New version is in here! Tell me more!&lt;/h2&gt;
 
-&lt;p&gt;A relevant page name, which matches the title pretty well might help &lt;a href=&quot;https://en.wikipedia.org/wiki/Search_engine_optimization&quot;&gt;Search Engine Optimization&lt;/a&gt; (Making sure the post is well referenced on search engines)&lt;/p&gt;
+&lt;p&gt;We have added features to &lt;code class=&quot;highlighter-rouge&quot;&gt;0.3.4&lt;/code&gt;, you can see it in our &lt;a href=&quot;https://github.com/bastion-rs/bastion/blob/master/CHANGELOG.md&quot;&gt;CHANGELOG&lt;/a&gt;. But I will showcase a bunch of excellent features of the new Bastion version!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;At Bastion itself, at the surface API level, here are our changes:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;0-&lt;/strong&gt; We added restart strategies, linear and exponential backoff between restarts. And maximum restarts for the failed children. Check out our &lt;a href=&quot;https://github.com/bastion-rs/bastion/blob/master/bastion/examples/restart_strategy.rs&quot;&gt;example in the repo&lt;/a&gt;. Thanks to &lt;a href=&quot;https://github.com/Relrin&quot;&gt;@Relrin&lt;/a&gt; and for the clean cut of their PR!&lt;/p&gt;
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;// Here we are specifying the used restart strategy for our supervisor.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;// By default the bastion's supervisors are always trying to restart&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;// failed actors with unlimited amount of tries.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;//&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;// At the beginning we're creating a new instance of RestartStrategy&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;// and then provides a policy and a back-off strategy.&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;restart_strategy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;RestartStrategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// Set the limits for supervisor, so that it could stop&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// after 3 attempts. If the actor can't be started, the supervisor&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// will remove the failed actor from tracking.&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;.with_restart_policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;RestartPolicy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Tries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// Set the desired restart strategy. By default supervisor will&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// try to restore the failed actor as soon as possible. However,&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// in our case we want to restart with a small delay between the&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// tries. Let's say that we want a regular time interval between the&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// attempts which is equal to 1 second.&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;.with_actor_restart_strategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;ActorRestartStrategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LinearBackOff&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from_secs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;// Define the supervisor&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;supervisor&lt;/span&gt;
+	 &lt;span class=&quot;c&quot;&gt;// That uses our restart strategy defined earlier&lt;/span&gt;
+	 &lt;span class=&quot;nf&quot;&gt;.with_restart_strategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;restart_strategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	 &lt;span class=&quot;c&quot;&gt;// And tracks the child group, defined in the following function&lt;/span&gt;
+	 &lt;span class=&quot;nf&quot;&gt;.children&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failed_actors_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;1-&lt;/strong&gt; Now we have a signature method to address all the actors in the system. Check our context addressing system &lt;a href=&quot;https://docs.rs/bastion/0.3.4/bastion/context/struct.BastionContext.html#method.signature&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;Bastion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;children&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.with_exec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BastionContext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;move&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.tell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.signature&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Hello to myself&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+            &lt;span class=&quot;nf&quot;&gt;Ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(())&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.expect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Couldn't create the children group.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;2-&lt;/strong&gt; We’ve added meta-architecture instantiation, so you can have a boilerplate free hierarchy for your actors and/or workers.&lt;/p&gt;
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;children&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;children!&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;c&quot;&gt;// the default redundancy is 1&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;redundancy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	   &lt;span class=&quot;c&quot;&gt;// do something with the message here&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;// simpler supervisor declaration.&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;supervisor!&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;children&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;children!&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  	&lt;span class=&quot;n&quot;&gt;supervisor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  	&lt;span class=&quot;n&quot;&gt;redundancy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  	&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    	&lt;span class=&quot;c&quot;&gt;// do something with the message here&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;3-&lt;/strong&gt; You can now mark your blocking code and execute it inside Bastion’s blocking adaptive thread pool.&lt;/p&gt;
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;task&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;blocking!&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;nn&quot;&gt;thread&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from_millis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;4-&lt;/strong&gt; If you want to run a process and wait for it’s completion, you can call &lt;code class=&quot;highlighter-rouge&quot;&gt;run!&lt;/code&gt;. &lt;code class=&quot;highlighter-rouge&quot;&gt;run&lt;/code&gt; is equivalent to what other Rust frameworks call &lt;code class=&quot;highlighter-rouge&quot;&gt;block_on&lt;/code&gt;. We decided to call it run because that’s the name implementations in other languages use. We think sticking to cross languages conventions will avoid confusion among users, regardless of their favorite language.&lt;/p&gt;
+
+&lt;p&gt;With the blocking task written above, we can use:&lt;/p&gt;
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;run!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And that’s it! This is equivalent of &lt;a href=&quot;https://zio.dev/docs/overview/overview_running_effects&quot;&gt;zio running effects&lt;/a&gt; in Rust environment. Now we have it!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;The Executor, our huge steampunk engine&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This is the core, the piece everything is running on top of.&lt;/p&gt;
+
+&lt;p&gt;It is way more diverged and different from any runtime out there.
+The approach we took is very different from the other frameworks in the ecosystem.&lt;/p&gt;
+
+&lt;p&gt;What are the differences ? Let’s have a look!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;0-&lt;/strong&gt; When under contention we skip work-stealing. We directly force queue consumers to handle messages coming from the run queue and continue working without work-stealing for a small fraction of time. Think of it like a congestion unblocking mechanism. It works pretty well so far! Works pretty well.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;1-&lt;/strong&gt; Bastion executor relies mostly on interconnect messages and tries to do single clock advancement without OS migration of threads. We are pinning our threads which means we need to be aware of how many vCPU Bastion is running on, and we maintain thread pinning on the fly. A lot of efforts were put into our pinning API in this release.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2-&lt;/strong&gt; We have a blocking pool based on the paper &lt;a href=&quot;https://ieeexplore.ieee.org/document/5951889&quot;&gt;A Novel Predictive and Self–Adaptive Dynamic Thread Pool Management&lt;/a&gt; and you can see this implementation documentation &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html&quot;&gt;here&lt;/a&gt;. That’s our blocking congestion prevention mechanism and it enables high throughput for the blocking operation under various cases ranging from long running, spike oriented, bursting, decaying task timing behaviors.
+Moreover, this thread pool is also &lt;a href=&quot;https://github.com/bastion-rs/bastion/pull/141/files#diff-d7ca8f060f95b61604b5bd4036546196R334-R349&quot;&gt;configurable with an environment variable&lt;/a&gt; for constrained environments.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3-&lt;/strong&gt; We improved the performance by making less syscalls when yielding. We are now passively looking for an opportunity to run tasks, and yield only once, as soon as possible.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;4-&lt;/strong&gt; Added convenience methods for blocking pool with &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/fn.spawn_blocking.html&quot;&gt;spawn_blocking&lt;/a&gt; in addition to existing &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/pool/fn.spawn.html&quot;&gt;spawn&lt;/a&gt;, &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/run/fn.run.html&quot;&gt;run&lt;/a&gt;. If you don’t want any supervision and restart mechanisms, and are just looking for a quick dive into bastion, add &lt;code class=&quot;highlighter-rouge&quot;&gt;bastion-executor&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;Cargo.toml&lt;/code&gt; file and you can start spawning sync and async tasks in no time !&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Bastion uses &lt;a href=&quot;https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html&quot;&gt;LightProc&lt;/a&gt;, and it’s the crucial implementation that makes fault tolerance easier for the applications.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;In LightProc we have added:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;An interface for storing state! This will be used to persist messages or data in memory and can be backed by anything that you can define.&lt;/p&gt;
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;lightproc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;proc_stack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ProcStack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;pub&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GlobalState&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;pub&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;usize&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;ProcStack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;.with_pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;.with_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GlobalState&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;From Rust HashMap’s to your NoSQL backend etc. &lt;a href=&quot;https://docs.rs/lightproc/0.3.4/lightproc/proc_stack/struct.ProcStack.html#method.with_state&quot;&gt;Wire up anything&lt;/a&gt; to your processes. Soon we will expose convenience APIs for mailbox preservation across restarts. &lt;a href=&quot;https://github.com/onsails&quot;&gt;@onsails&lt;/a&gt; is working on it &lt;a href=&quot;https://github.com/bastion-rs/bastion/pull/143&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-big-thanks&quot;&gt;A Big Thanks&lt;/h2&gt;
+
+&lt;p&gt;Yes, a big thanks, to everyone who enabled this project to run, supported, wrote code and made it production grade in plenty of aspects. Thanks for everything and thanks for paving the road with us! We are getting bigger and I really like how passionate people are about what are we trying to do here! I can’t thank enough everyone who shared their ideas on &lt;a href=&quot;https://discord.gg/DqRqtRT&quot;&gt;our Discord channel&lt;/a&gt;, on issues and over the PRs! Thank you all, let’s continue building together! 2020 is a year that we (as Rust community) will unite over plenty of subjects, and topics. I like to close my thanks with these words (though this was a famous US Marshall Plan propaganda, this sentence pretty much sums up all of us as people working on Rust): &lt;strong&gt;Whatever the weather we must move together!&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;In the upcoming blog posts, we will talk about how the Bastion runtime is designed, which design decisions were made (and why) and our newest initiatives and next goals. Meanwhile we are expanding our ecosystem with various projects and would love to welcome maintainers who want to work on distributed systems and data processing. We have pretty high aims for our projects, and would love to help and mentor you. Come join us! Join our &lt;a href=&quot;https://discordapp.com/invite/DqRqtRT&quot;&gt;Discord&lt;/a&gt;, have a look at our issues and projects &lt;a href=&quot;https://github.com/bastion-rs&quot;&gt;our org’s GitHub&lt;/a&gt;!&lt;/p&gt;
 </description>
-        <pubDate>Fri, 17 Jan 2020 00:00:00 +0100</pubDate>
-        <link>http://localhost:4000/2020/01/17/blog-post-placeholder.html</link>
-        <guid isPermaLink="true">http://localhost:4000/2020/01/17/blog-post-placeholder.html</guid>
+        <pubDate>Thu, 30 Jan 2020 00:00:00 +0100</pubDate>
+        <link>http://localhost:4000/2020/01/30/new-age-of-bastion.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/01/30/new-age-of-bastion.html</guid>
         
         
       </item>

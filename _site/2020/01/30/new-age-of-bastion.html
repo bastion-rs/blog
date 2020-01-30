@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>New age of Bastion - Bastion-rs blog</title>
+    <meta name="description" content="Welcome to the official bastion-rs blog!
+">
+    <link rel="alternate" type="application/rss+xml" title="New age of Bastion"
+        href="/feed.xml" />
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/center-img.css">
+    <link rel="canonical" href="http://localhost:4000/2020/01/30/new-age-of-bastion.html">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/images/safari-pinned-tab.svg>
+    <meta name=" msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@bastion_rs" />
+    <meta name="twitter:title" content="New age of Bastion" />
+    
+    <meta name="twitter:description" content="Welcome to the official bastion-rs blog!
+" />
+    
+    <meta name="twitter:url" content="https://bastion-rs/2020/01/30/new-age-of-bastion.html">
+
+</head>
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/"><img id="site-logo" src="https://raw.githubusercontent.com/bastion-rs/bastion-rs.github.io/master/src/assets/images/bastion-logo.png"/> Bastion-rs blog</a>
+
+    <!--<nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>-->
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">New age of Bastion</h1>
+    <p class="post-meta">Jan 30, 2020 • Written by Mahmut Bulut, and edited by Jeremy Lempereur</p>
+  </header>
+
+  <article class="post-content">
+    <p><strong>Disclaimer:</strong> This post is not only an announcement of new features of Bastion, which comes with 0.3.4; it also declares our future perspective for the project.</p>
+
+<p>So we had a long way since our project had started in June 2019. Right now, we are evolving from a runtime that enables fault-recovery for your server-side applications to an agnostic runtime, which has its executor but also works with other executors. Since the beginning we can interoperate with <a href="https://async.rs">async-std</a> without the hassle.</p>
+
+<p>We have started with an idea of runtime, which can recover from failures in the application domain, no matter what happens. Async/await landed, and we got stronger and well known in the community. Then Bastion deployed to AWS lambdas, did, and still doing its job in data processing pipelines. Benchmarks of sparse queries outperformed plenty of sparse queries and aggregations over NYC taxi data in various inmem benchmarks.</p>
+
+<p>Where futures-executor performs:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test count_aggregation      ... bench: 108,916,527 ns/iter (+/- 11,909,528)
+</code></pre></div></div>
+<p>Bastion performed:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test count_aggregation      ... bench: 87,096,485 ns/iter (+/- 3,874,812)
+</code></pre></div></div>
+<p>Everything started with an idea of replicating what Erlang does in its runtime. Having the idea of using the runtime for data processing came right after it. Bastion’s purpose is to provide a generic runtime for fault-tolerant middlewares, distributed systems, and data processing pipelines.</p>
+
+<p>I didn’t aim for faster runtime, but I aimed to exploit the whole resources whenever it’s possible. Bastion also doesn’t aim to replace every other existing runtimes. It just unfolds a different approach to design systems. This system design is very graspable for the people who come from a functional background like Scala, Erlang, or Haskell. When we released Bastion 0.1 in June 2019 with Tokio runtime, I realized that it’s not the way that this project can continue. With premature design assumptions of the runtime, I struggled with developing the project with Tokio runtime. Having to implement a monolithic runtime with several lack of reduction based concurrency principles made me write an executor for Bastion. So we end up having a multiple run queue based, redundancy statistics sampled, async executor which is a primer of the runtime. Throughout time, people wanted to use blocking tasks also. So we came with an idea of using an adaptive blocking pool, which can <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html">automatically scale the resources based on the throughput</a> and prevents IO hogs.</p>
+
+<h2 id="what-is-next-with-bastion">What is next with Bastion?</h2>
+
+<ul>
+  <li>
+    <p>We are currently working on being runtime agnostic. Working in everywhere but still supplying our own executor to the people who want to have fault-tolerant systems in their projects.</p>
+  </li>
+  <li>
+    <p>We are exploring HCS(Hot code swap) case. And currently, we have <a href="https://github.com/bastion-rs/bastion/issues/103">design discussions</a> going on. We would be really happy to gather your feedback and ideas on HCS!</p>
+  </li>
+  <li>
+    <p>WASM is a rising star in the ecosystem. We would like to support it, first we want to make everything <code class="highlighter-rouge">#[no_std]</code>, then we want to move towards to make Bastion projects compile for WASM.</p>
+  </li>
+  <li>
+    <p>We are working on Bastion Streams! A streaming framework implementation which is backpressure aware and works with a push interface like API. Many people are asking about how this will be implemented, and I have pretty concrete ideas about this. Especially from the perspective of Rust! So now I am quite bit busy enabling parallel streams in Rust. <strong>Not with <a href="https://docs.rs/futures/0.3.1/futures/stream/trait.Stream.html">this</a>, or <a href="https://rust-lang.github.io/async-book/05_streams/01_chapter.html">this</a>, or via <a href="https://rust-lang.github.io/async-book/06_multiple_futures/03_select.html">this</a></strong>. Come join us if you find this interesting!</p>
+  </li>
+  <li>
+    <p>Distributed properties are still needs to be solved. We are slow at that side but wrote initial epidemic protocol implementation
+We aren’t moving too fast on this, but an initial epidemic protocol implementation can be seen and used in our <a href="http://github.com/bastion-rs/artillery">Artillery</a> repository.</p>
+  </li>
+</ul>
+
+<h2 id="new-version-is-in-here-tell-me-more">New version is in here! Tell me more!</h2>
+
+<p>We have added features to <code class="highlighter-rouge">0.3.4</code>, you can see it in our <a href="https://github.com/bastion-rs/bastion/blob/master/CHANGELOG.md">CHANGELOG</a>. But I will showcase a bunch of excellent features of the new Bastion version!</p>
+
+<hr />
+
+<p><strong>At Bastion itself, at the surface API level, here are our changes:</strong></p>
+
+<p><strong>0-</strong> We added restart strategies, linear and exponential backoff between restarts. And maximum restarts for the failed children. Check out our <a href="https://github.com/bastion-rs/bastion/blob/master/bastion/examples/restart_strategy.rs">example in the repo</a>. Thanks to <a href="https://github.com/Relrin">@Relrin</a> and for the clean cut of their PR!</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Here we are specifying the used restart strategy for our supervisor.</span>
+<span class="c">// By default the bastion's supervisors are always trying to restart</span>
+<span class="c">// failed actors with unlimited amount of tries.</span>
+<span class="c">//</span>
+<span class="c">// At the beginning we're creating a new instance of RestartStrategy</span>
+<span class="c">// and then provides a policy and a back-off strategy.</span>
+<span class="k">let</span> <span class="n">restart_strategy</span> <span class="o">=</span> <span class="nn">RestartStrategy</span><span class="p">::</span><span class="nf">default</span><span class="p">()</span>
+    <span class="c">// Set the limits for supervisor, so that it could stop</span>
+    <span class="c">// after 3 attempts. If the actor can't be started, the supervisor</span>
+    <span class="c">// will remove the failed actor from tracking.</span>
+    <span class="nf">.with_restart_policy</span><span class="p">(</span><span class="nn">RestartPolicy</span><span class="p">::</span><span class="nf">Tries</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="c">// Set the desired restart strategy. By default supervisor will</span>
+    <span class="c">// try to restore the failed actor as soon as possible. However,</span>
+    <span class="c">// in our case we want to restart with a small delay between the</span>
+    <span class="c">// tries. Let's say that we want a regular time interval between the</span>
+    <span class="c">// attempts which is equal to 1 second.</span>
+    <span class="nf">.with_actor_restart_strategy</span><span class="p">(</span><span class="nn">ActorRestartStrategy</span><span class="p">::</span><span class="n">LinearBackOff</span> <span class="p">{</span>
+      <span class="n">timeout</span><span class="p">:</span> <span class="nn">Duration</span><span class="p">::</span><span class="nf">from_secs</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">});</span>
+
+<span class="c">// Define the supervisor</span>
+<span class="n">supervisor</span>
+	 <span class="c">// That uses our restart strategy defined earlier</span>
+	 <span class="nf">.with_restart_strategy</span><span class="p">(</span><span class="n">restart_strategy</span><span class="p">)</span>
+	 <span class="c">// And tracks the child group, defined in the following function</span>
+	 <span class="nf">.children</span><span class="p">(|</span><span class="n">children</span><span class="p">|</span> <span class="nf">failed_actors_group</span><span class="p">(</span><span class="n">children</span><span class="p">))</span>
+</code></pre></div></div>
+<p><strong>1-</strong> Now we have a signature method to address all the actors in the system. Check our context addressing system <a href="https://docs.rs/bastion/0.3.4/bastion/context/struct.BastionContext.html#method.signature">here</a></p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Bastion</span><span class="p">::</span><span class="nf">children</span><span class="p">(|</span><span class="n">children</span><span class="p">|</span> <span class="p">{</span>
+    <span class="n">children</span><span class="nf">.with_exec</span><span class="p">(|</span><span class="n">ctx</span><span class="p">:</span> <span class="n">BastionContext</span><span class="p">|</span> <span class="p">{</span>
+        <span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+            <span class="n">ctx</span><span class="nf">.tell</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ctx</span><span class="nf">.signature</span><span class="p">(),</span> <span class="s">"Hello to myself"</span><span class="p">);</span>
+
+            <span class="nf">Ok</span><span class="p">(())</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">})</span><span class="nf">.expect</span><span class="p">(</span><span class="s">"Couldn't create the children group."</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><strong>2-</strong> We’ve added meta-architecture instantiation, so you can have a boilerplate free hierarchy for your actors and/or workers.</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">children</span> <span class="o">=</span> <span class="nd">children!</span> <span class="p">{</span>
+	<span class="c">// the default redundancy is 1</span>
+	<span class="n">redundancy</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+	<span class="n">action</span><span class="p">:</span> <span class="p">|</span><span class="n">msg</span><span class="p">|</span> <span class="p">{</span>
+	   <span class="c">// do something with the message here</span>
+	<span class="p">},</span>
+<span class="p">};</span>
+
+<span class="c">// simpler supervisor declaration.</span>
+<span class="k">let</span> <span class="n">sp</span> <span class="o">=</span> <span class="nd">supervisor!</span> <span class="p">{};</span>
+
+<span class="k">let</span> <span class="n">children</span> <span class="o">=</span> <span class="nd">children!</span> <span class="p">{</span>
+  	<span class="n">supervisor</span><span class="p">:</span> <span class="n">sp</span><span class="p">,</span>
+  	<span class="n">redundancy</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+  	<span class="n">action</span><span class="p">:</span> <span class="p">|</span><span class="n">msg</span><span class="p">|</span> <span class="p">{</span>
+    	<span class="c">// do something with the message here</span>
+    <span class="p">},</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p><strong>3-</strong> You can now mark your blocking code and execute it inside Bastion’s blocking adaptive thread pool.</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">task</span> <span class="o">=</span> <span class="nd">blocking!</span> <span class="p">{</span>
+	<span class="nn">thread</span><span class="p">::</span><span class="nf">sleep</span><span class="p">(</span><span class="nn">time</span><span class="p">::</span><span class="nn">Duration</span><span class="p">::</span><span class="nf">from_millis</span><span class="p">(</span><span class="mi">3000</span><span class="p">));</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p><strong>4-</strong> If you want to run a process and wait for it’s completion, you can call <code class="highlighter-rouge">run!</code>. <code class="highlighter-rouge">run</code> is equivalent to what other Rust frameworks call <code class="highlighter-rouge">block_on</code>. We decided to call it run because that’s the name implementations in other languages use. We think sticking to cross languages conventions will avoid confusion among users, regardless of their favorite language.</p>
+
+<p>With the blocking task written above, we can use:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">run!</span><span class="p">(</span><span class="n">task</span><span class="p">);</span>
+</code></pre></div></div>
+<p>And that’s it! This is equivalent of <a href="https://zio.dev/docs/overview/overview_running_effects">zio running effects</a> in Rust environment. Now we have it!</p>
+
+<hr />
+
+<p><strong>The Executor, our huge steampunk engine</strong></p>
+
+<p>This is the core, the piece everything is running on top of.</p>
+
+<p>It is way more diverged and different from any runtime out there.
+The approach we took is very different from the other frameworks in the ecosystem.</p>
+
+<p>What are the differences ? Let’s have a look!</p>
+
+<p><strong>0-</strong> When under contention we skip work-stealing. We directly force queue consumers to handle messages coming from the run queue and continue working without work-stealing for a small fraction of time. Think of it like a congestion unblocking mechanism. It works pretty well so far! Works pretty well.</p>
+
+<p><strong>1-</strong> Bastion executor relies mostly on interconnect messages and tries to do single clock advancement without OS migration of threads. We are pinning our threads which means we need to be aware of how many vCPU Bastion is running on, and we maintain thread pinning on the fly. A lot of efforts were put into our pinning API in this release.</p>
+
+<p><strong>2-</strong> We have a blocking pool based on the paper <a href="https://ieeexplore.ieee.org/document/5951889">A Novel Predictive and Self–Adaptive Dynamic Thread Pool Management</a> and you can see this implementation documentation <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html">here</a>. That’s our blocking congestion prevention mechanism and it enables high throughput for the blocking operation under various cases ranging from long running, spike oriented, bursting, decaying task timing behaviors.
+Moreover, this thread pool is also <a href="https://github.com/bastion-rs/bastion/pull/141/files#diff-d7ca8f060f95b61604b5bd4036546196R334-R349">configurable with an environment variable</a> for constrained environments.</p>
+
+<p><strong>3-</strong> We improved the performance by making less syscalls when yielding. We are now passively looking for an opportunity to run tasks, and yield only once, as soon as possible.</p>
+
+<p><strong>4-</strong> Added convenience methods for blocking pool with <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/fn.spawn_blocking.html">spawn_blocking</a> in addition to existing <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/pool/fn.spawn.html">spawn</a>, <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/run/fn.run.html">run</a>. If you don’t want any supervision and restart mechanisms, and are just looking for a quick dive into bastion, add <code class="highlighter-rouge">bastion-executor</code> to your <code class="highlighter-rouge">Cargo.toml</code> file and you can start spawning sync and async tasks in no time !</p>
+
+<hr />
+
+<p>Bastion uses <a href="https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html">LightProc</a>, and it’s the crucial implementation that makes fault tolerance easier for the applications.</p>
+
+<p><strong>In LightProc we have added:</strong></p>
+
+<p>An interface for storing state! This will be used to persist messages or data in memory and can be backed by anything that you can define.</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">lightproc</span><span class="p">::</span><span class="nn">proc_stack</span><span class="p">::</span><span class="n">ProcStack</span><span class="p">;</span>
+
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">GlobalState</span> <span class="p">{</span>
+   <span class="k">pub</span> <span class="n">amount</span><span class="p">:</span> <span class="nb">usize</span>
+<span class="p">}</span>
+
+<span class="nn">ProcStack</span><span class="p">::</span><span class="nf">default</span><span class="p">()</span>
+    <span class="nf">.with_pid</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nf">.with_state</span><span class="p">(</span><span class="n">GlobalState</span> <span class="p">{</span> <span class="n">amount</span><span class="p">:</span> <span class="mi">1</span> <span class="p">});</span>
+</code></pre></div></div>
+<p>From Rust HashMap’s to your NoSQL backend etc. <a href="https://docs.rs/lightproc/0.3.4/lightproc/proc_stack/struct.ProcStack.html#method.with_state">Wire up anything</a> to your processes. Soon we will expose convenience APIs for mailbox preservation across restarts. <a href="https://github.com/onsails">@onsails</a> is working on it <a href="https://github.com/bastion-rs/bastion/pull/143">here</a>.</p>
+
+<h2 id="a-big-thanks">A Big Thanks</h2>
+
+<p>Yes, a big thanks, to everyone who enabled this project to run, supported, wrote code and made it production grade in plenty of aspects. Thanks for everything and thanks for paving the road with us! We are getting bigger and I really like how passionate people are about what are we trying to do here! I can’t thank enough everyone who shared their ideas on <a href="https://discord.gg/DqRqtRT">our Discord channel</a>, on issues and over the PRs! Thank you all, let’s continue building together! 2020 is a year that we (as Rust community) will unite over plenty of subjects, and topics. I like to close my thanks with these words (though this was a famous US Marshall Plan propaganda, this sentence pretty much sums up all of us as people working on Rust): <strong>Whatever the weather we must move together!</strong></p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>In the upcoming blog posts, we will talk about how the Bastion runtime is designed, which design decisions were made (and why) and our newest initiatives and next goals. Meanwhile we are expanding our ecosystem with various projects and would love to welcome maintainers who want to work on distributed systems and data processing. We have pretty high aims for our projects, and would love to help and mentor you. Come join us! Join our <a href="https://discordapp.com/invite/DqRqtRT">Discord</a>, have a look at our issues and projects <a href="https://github.com/bastion-rs">our org’s GitHub</a>!</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <h2 class="footer-heading">By <a href="https://bastion.rs">bastion.rs</a></h2>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/bastion-rs">
+              <span class="icon  icon--github">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282"
+                    d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z" />
+                </svg>
+              </span>
+
+              <span class="username">bastion-rs</span>
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/bastion_rs">
+              <span class="icon  icon--twitter">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282"
+                    d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                  c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z" />
+                </svg>
+              </span>
+
+              <span class="username">bastion_rs</span>
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-3">
+        <p class="text">Welcome to the official bastion-rs blog!
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+  </body>
+
+</html>
