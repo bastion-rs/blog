@@ -195,15 +195,13 @@
 
 <hr />
 
-<p>Bastion uses <a href="https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html">LightProc</a>, and it’s the crucial implementation that makes fault tolerance easier for the applications.</p>
-
-<p><strong>Executor, our huge steampunk machine</strong></p>
+<p><strong>Executor, our huge steampunk engine</strong></p>
 
 <p>That the piece that we are running everything on top. It is way more diverged and different from any runtime out there. Working with different techniques that we will explore in the upcoming posts.</p>
 
 <p>But what has changed? Let’s explore!</p>
 
-<p>0- Under the contention we skip work-stealing. We directly force queue consumer to consume message from the run queue and continue working without work-stealing for a small fraction of time. Think like this is a congestion blocking mechanism. Works pretty well.</p>
+<p>0- Under the contention we skip work-stealing. We directly force queue consumer to consume message from the run queue and continue working without work-stealing for a small fraction of time. Think like this is a congestion unblocking mechanism. Works pretty well.</p>
 
 <p>1- Bastion executor relies mostly on interconnect messages and tries to do single clock advancement without OS migration of threads. We are pinning our threads so we need to know how many vCPU is going on and maintain thread pinning on the fly. In this release, we have improved pinning API a lot.</p>
 
@@ -213,6 +211,10 @@ Moreover, this thread pool is also <a href="https://github.com/bastion-rs/bastio
 <p>3- Improved performance by having less syscalls to kernel for yielding the time back to OS. Now we are passively looking for opportunity to execute, and yield back once as soon as possible.</p>
 
 <p>4- Added convenience methods for blocking pool with <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/fn.spawn_blocking.html">spawn_blocking</a> in addition to existing <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/pool/fn.spawn.html">spawn</a>, <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/run/fn.run.html">run</a>. You don’t need to surface API to try out Bastion’s Executor. You can only add <code class="highlighter-rouge">bastion-executor</code> to your <code class="highlighter-rouge">Cargo.toml</code> and you are good to go!</p>
+
+<hr />
+
+<p>Bastion uses <a href="https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html">LightProc</a>, and it’s the crucial implementation that makes fault tolerance easier for the applications.</p>
 
 <p><strong>In LightProc we have added:</strong></p>
 

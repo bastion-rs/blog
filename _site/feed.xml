@@ -6,8 +6,8 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 30 Jan 2020 16:05:28 +0100</pubDate>
-    <lastBuildDate>Thu, 30 Jan 2020 16:05:28 +0100</lastBuildDate>
+    <pubDate>Thu, 30 Jan 2020 16:23:25 +0100</pubDate>
+    <lastBuildDate>Thu, 30 Jan 2020 16:23:25 +0100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -129,15 +129,13 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;Bastion uses &lt;a href=&quot;https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html&quot;&gt;LightProc&lt;/a&gt;, and it’s the crucial implementation that makes fault tolerance easier for the applications.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Executor, our huge steampunk machine&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Executor, our huge steampunk engine&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;That the piece that we are running everything on top. It is way more diverged and different from any runtime out there. Working with different techniques that we will explore in the upcoming posts.&lt;/p&gt;
 
 &lt;p&gt;But what has changed? Let’s explore!&lt;/p&gt;
 
-&lt;p&gt;0- Under the contention we skip work-stealing. We directly force queue consumer to consume message from the run queue and continue working without work-stealing for a small fraction of time. Think like this is a congestion blocking mechanism. Works pretty well.&lt;/p&gt;
+&lt;p&gt;0- Under the contention we skip work-stealing. We directly force queue consumer to consume message from the run queue and continue working without work-stealing for a small fraction of time. Think like this is a congestion unblocking mechanism. Works pretty well.&lt;/p&gt;
 
 &lt;p&gt;1- Bastion executor relies mostly on interconnect messages and tries to do single clock advancement without OS migration of threads. We are pinning our threads so we need to know how many vCPU is going on and maintain thread pinning on the fly. In this release, we have improved pinning API a lot.&lt;/p&gt;
 
@@ -147,6 +145,10 @@ Moreover, this thread pool is also &lt;a href=&quot;https://github.com/bastion-r
 &lt;p&gt;3- Improved performance by having less syscalls to kernel for yielding the time back to OS. Now we are passively looking for opportunity to execute, and yield back once as soon as possible.&lt;/p&gt;
 
 &lt;p&gt;4- Added convenience methods for blocking pool with &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/fn.spawn_blocking.html&quot;&gt;spawn_blocking&lt;/a&gt; in addition to existing &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/pool/fn.spawn.html&quot;&gt;spawn&lt;/a&gt;, &lt;a href=&quot;https://docs.rs/bastion-executor/0.3.4/bastion_executor/run/fn.run.html&quot;&gt;run&lt;/a&gt;. You don’t need to surface API to try out Bastion’s Executor. You can only add &lt;code class=&quot;highlighter-rouge&quot;&gt;bastion-executor&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;Cargo.toml&lt;/code&gt; and you are good to go!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Bastion uses &lt;a href=&quot;https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html&quot;&gt;LightProc&lt;/a&gt;, and it’s the crucial implementation that makes fault tolerance easier for the applications.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;In LightProc we have added:&lt;/strong&gt;&lt;/p&gt;
 

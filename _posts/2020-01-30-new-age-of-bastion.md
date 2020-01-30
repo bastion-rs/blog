@@ -120,15 +120,13 @@ And that's all now everything will be run. This is equivalent of [zio running ef
 
 -------
 
-Bastion uses [LightProc](https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html), and it's the crucial implementation that makes fault tolerance easier for the applications.
-
-**Executor, our huge steampunk machine**
+**Executor, our huge steampunk engine**
 
 That the piece that we are running everything on top. It is way more diverged and different from any runtime out there. Working with different techniques that we will explore in the upcoming posts.
 
 But what has changed? Let's explore!
 
-0- Under the contention we skip work-stealing. We directly force queue consumer to consume message from the run queue and continue working without work-stealing for a small fraction of time. Think like this is a congestion blocking mechanism. Works pretty well.
+0- Under the contention we skip work-stealing. We directly force queue consumer to consume message from the run queue and continue working without work-stealing for a small fraction of time. Think like this is a congestion unblocking mechanism. Works pretty well.
 
 1- Bastion executor relies mostly on interconnect messages and tries to do single clock advancement without OS migration of threads. We are pinning our threads so we need to know how many vCPU is going on and maintain thread pinning on the fly. In this release, we have improved pinning API a lot.
 
@@ -139,6 +137,9 @@ Moreover, this thread pool is also [configurable with environment variable](http
 
 4- Added convenience methods for blocking pool with [spawn_blocking](https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/fn.spawn_blocking.html) in addition to existing [spawn](https://docs.rs/bastion-executor/0.3.4/bastion_executor/pool/fn.spawn.html), [run](https://docs.rs/bastion-executor/0.3.4/bastion_executor/run/fn.run.html). You don't need to surface API to try out Bastion's Executor. You can only add `bastion-executor` to your `Cargo.toml` and you are good to go!
 
+------
+
+Bastion uses [LightProc](https://docs.rs/lightproc/0.3.4/lightproc/lightproc/index.html), and it's the crucial implementation that makes fault tolerance easier for the applications.
 
 **In LightProc we have added:**
 
