@@ -74,7 +74,7 @@
 
   <header class="post-header">
     <h1 class="post-title">New age of Bastion</h1>
-    <p class="post-meta">Jan 30, 2020 • Mahmut Bulut</p>
+    <p class="post-meta">Jan 30, 2020 • Written by Mahmut Bulut, and edited by Jeremy Lempereur</p>
   </header>
 
   <article class="post-content">
@@ -90,27 +90,28 @@
 <p>Bastion performed:</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test count_aggregation      ... bench: 87,096,485 ns/iter (+/- 3,874,812)
 </code></pre></div></div>
-<p>All have started with an idea of replicating what Erlang does its runtime. Using the runtime for the data processing comes right after it. Writing a generic runtime for fault-tolerant middleware, distributed systems, and data processing pipelines was the main goal of Bastion.</p>
+<p>Everything started with an idea of replicating what Erlang does its runtime. Having the idea of using the runtime for the data processing came right after it. Writing a generic runtime for fault-tolerant middleware, distributed systems, and data processing pipelines is the main goal of Bastion.</p>
 
-<p>I didn’t aim for faster runtime, but I aimed to exploit the whole resources whenever it’s possible. Bastion also doesn’t aim for a being replacement to runtimes out there. It just unfolds a different approach to design systems. This system design is very graspable for the people who come from a functional background like Scala, Erlang, or Haskell. When we released the Bastion 0.1 in June 2019 with Tokio runtime, I realized that it’s not the way that this project can continue. With premature design assumptions of the runtime, I struggled with developing the project with Tokio runtime. So we had a multiple run queue based statistics sampled async runtime. Throughout time, people wanted to use blocking tasks also. So we came with an idea of using an adaptive blocking pool, which can <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html">automatically scale based on the throughput</a> and its’ hogs up and down easily.</p>
+<p>I didn’t aim for faster runtime, but I aimed to exploit the whole resources whenever it’s possible. Bastion also doesn’t aim to replace every other existing runtimes. It just unfolds a different approach to design systems. This system design is very graspable for the people who come from a functional background like Scala, Erlang, or Haskell. When we released Bastion 0.1 in June 2019 with Tokio runtime, I realized that it’s not the way that this project can continue. With premature design assumptions of the runtime, I struggled with developing the project with Tokio runtime. Having to implement a monolithic runtime with several lack of reduction based concurrency principles made me write an executor for Bastion. So we end up having a multiple run queue based, redundancy statistics sampled, async executor which is a primer of the runtime. Throughout time, people wanted to use blocking tasks also. So we came with an idea of using an adaptive blocking pool, which can <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html">automatically scale the resources based on the throughput</a> and prevents IO hogs.</p>
 
-<h2 id="what-is-upcoming-for-bastion">What is upcoming for Bastion?</h2>
+<h2 id="what-is-next-with-bastion">What is next with Bastion?</h2>
 
 <ul>
   <li>
-    <p>We are currently working on being agnostic. Working in everywhere but still supplying our own executor to the people who want to have fault-tolerant systems in their projects.</p>
+    <p>We are currently working on being runtime agnostic. Working in everywhere but still supplying our own executor to the people who want to have fault-tolerant systems in their projects.</p>
   </li>
   <li>
-    <p>We are exploring HCS(Hot code swap) case. And currently, we have <a href="https://github.com/bastion-rs/bastion/issues/103">design discussions</a> going on.</p>
+    <p>We are exploring HCS(Hot code swap) case. And currently, we have <a href="https://github.com/bastion-rs/bastion/issues/103">design discussions</a> going on. We would be really happy to gather your feedback and ideas on HCS!</p>
   </li>
   <li>
     <p>WASM is a rising star in the ecosystem. We would like to support it, first we want to make everything <code class="highlighter-rouge">#[no_std]</code>, then we want to move towards to make Bastion projects compile for WASM.</p>
   </li>
   <li>
-    <p>We are working on Bastion Streams! A streaming framework implementation which is backpressure aware and works with push interface like API. Many people are asking about how this will be implemented, and I have pretty concrete ideas about this. Especially from the perspective of Rust! So now I am quite bit busy enabling parallel streams in Rust. <strong>Not with <a href="https://docs.rs/futures/0.3.1/futures/stream/trait.Stream.html">this</a>, or <a href="https://rust-lang.github.io/async-book/05_streams/01_chapter.html">this</a>, or via <a href="https://rust-lang.github.io/async-book/06_multiple_futures/03_select.html">this</a></strong>. Come join us if you find this interesting!</p>
+    <p>We are working on Bastion Streams! A streaming framework implementation which is backpressure aware and works with a push interface like API. Many people are asking about how this will be implemented, and I have pretty concrete ideas about this. Especially from the perspective of Rust! So now I am quite bit busy enabling parallel streams in Rust. <strong>Not with <a href="https://docs.rs/futures/0.3.1/futures/stream/trait.Stream.html">this</a>, or <a href="https://rust-lang.github.io/async-book/05_streams/01_chapter.html">this</a>, or via <a href="https://rust-lang.github.io/async-book/06_multiple_futures/03_select.html">this</a></strong>. Come join us if you find this interesting!</p>
   </li>
   <li>
-    <p>Distributed properties are still needs to be solved. We are slow at that side but wrote initial epidemic protocol implementation in our <a href="http://github.com/bastion-rs/artillery">Artillery</a> repository.</p>
+    <p>Distributed properties are still needs to be solved. We are slow at that side but wrote initial epidemic protocol implementation
+We aren’t moving too fast on this, but an initial epidemic protocol implementation can be seen and used in our <a href="http://github.com/bastion-rs/artillery">Artillery</a> repository.</p>
   </li>
 </ul>
 
@@ -118,9 +119,11 @@
 
 <p>We have added features to <code class="highlighter-rouge">0.3.4</code>, you can see it in our <a href="https://github.com/bastion-rs/bastion/blob/master/CHANGELOG.md">CHANGELOG</a>. But I will showcase a bunch of excellent features of the new Bastion version!</p>
 
+<hr />
+
 <p><strong>At Bastion itself, at the surface API level, here are our changes:</strong></p>
 
-<p>0- We added restart strategies, linear and exponential backoff between restarts. And maximum restarts for the failed children. Check out our <a href="https://github.com/bastion-rs/bastion/blob/master/bastion/examples/restart_strategy.rs">example in the repo</a>.</p>
+<p><strong>0-</strong> We added restart strategies, linear and exponential backoff between restarts. And maximum restarts for the failed children. Check out our <a href="https://github.com/bastion-rs/bastion/blob/master/bastion/examples/restart_strategy.rs">example in the repo</a>. Thanks to <a href="https://github.com/Relrin">@Relrin</a> and for the clean cut of their PR!</p>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Here we are specifying the used restart strategy for our supervisor.</span>
 <span class="c">// By default the bastion's supervisors are always trying to restart</span>
 <span class="c">// failed actors with unlimited amount of tries.</span>
@@ -148,7 +151,7 @@
 	 <span class="c">// And tracks the child group, defined in the following function</span>
 	 <span class="nf">.children</span><span class="p">(|</span><span class="n">children</span><span class="p">|</span> <span class="nf">failed_actors_group</span><span class="p">(</span><span class="n">children</span><span class="p">))</span>
 </code></pre></div></div>
-<p>1- Now we have a signature method to address all the actors in the system. Check our context addressing system <a href="https://docs.rs/bastion/0.3.4/bastion/context/struct.BastionContext.html#method.signature">here</a></p>
+<p><strong>1-</strong> Now we have a signature method to address all the actors in the system. Check our context addressing system <a href="https://docs.rs/bastion/0.3.4/bastion/context/struct.BastionContext.html#method.signature">here</a></p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Bastion</span><span class="p">::</span><span class="nf">children</span><span class="p">(|</span><span class="n">children</span><span class="p">|</span> <span class="p">{</span>
     <span class="n">children</span><span class="nf">.with_exec</span><span class="p">(|</span><span class="n">ctx</span><span class="p">:</span> <span class="n">BastionContext</span><span class="p">|</span> <span class="p">{</span>
@@ -161,7 +164,7 @@
 <span class="p">})</span><span class="nf">.expect</span><span class="p">(</span><span class="s">"Couldn't create the children group."</span><span class="p">);</span>
 </code></pre></div></div>
 
-<p>2- We’ve added meta-architecture instantiation. What is that? So now you can have a boilerplate free hierarchy for your actors and/or workers.</p>
+<p><strong>2-</strong> We’ve added meta-architecture instantiation, so you can have a boilerplate free hierarchy for your actors and/or workers.</p>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">children</span> <span class="o">=</span> <span class="nd">children!</span> <span class="p">{</span>
 	<span class="c">// the default redundancy is 1</span>
 	<span class="n">redundancy</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
@@ -182,35 +185,40 @@
 <span class="p">};</span>
 </code></pre></div></div>
 
-<p>3- You can mark your blocking code and execute that code inside blocking adaptive thread pool of Bastion.</p>
+<p><strong>3-</strong> You can now mark your blocking code and execute it inside Bastion’s blocking adaptive thread pool.</p>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">task</span> <span class="o">=</span> <span class="nd">blocking!</span> <span class="p">{</span>
 	<span class="nn">thread</span><span class="p">::</span><span class="nf">sleep</span><span class="p">(</span><span class="nn">time</span><span class="p">::</span><span class="nn">Duration</span><span class="p">::</span><span class="nf">from_millis</span><span class="p">(</span><span class="mi">3000</span><span class="p">));</span>
 <span class="p">};</span>
 </code></pre></div></div>
 
-<p>4- What other frameworks and implementation calls <code class="highlighter-rouge">block_on</code> we call it <code class="highlighter-rouge">run</code>.  Because that’s how other ecosystems call it. We believe general conventions should be over the specific conventions. If you want to run a process and wait for it’s completion. (e.g. the blocking task written above) use:</p>
+<p><strong>4-</strong> If you want to run a process and wait for it’s completion, you can call <code class="highlighter-rouge">run!</code>. <code class="highlighter-rouge">run</code> is equivalent to what other Rust frameworks call <code class="highlighter-rouge">block_on</code>. We decided to call it run because that’s the name implementations in other languages use. We think sticking to cross languages conventions will avoid confusion among users, regardless of their favorite language.</p>
+
+<p>With the blocking task written above, we can use:</p>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">run!</span><span class="p">(</span><span class="n">task</span><span class="p">);</span>
 </code></pre></div></div>
-<p>And that’s all now everything will be run. This is equivalent of <a href="https://zio.dev/docs/overview/overview_running_effects">zio running effects</a> in Rust environment. Now we have it!</p>
+<p>And that’s it! This is equivalent of <a href="https://zio.dev/docs/overview/overview_running_effects">zio running effects</a> in Rust environment. Now we have it!</p>
 
 <hr />
 
-<p><strong>Executor, our huge steampunk engine</strong></p>
+<p><strong>The Executor, our huge steampunk engine</strong></p>
 
-<p>That the piece that we are running everything on top. It is way more diverged and different from any runtime out there. Working with different techniques that we will explore in the upcoming posts.</p>
+<p>This is the core, the piece everything is running on top of.</p>
 
-<p>But what has changed? Let’s explore!</p>
+<p>It is way more diverged and different from any runtime out there.
+The approach we took is very different from the other frameworks in the ecosystem.</p>
 
-<p>0- Under the contention we skip work-stealing. We directly force queue consumer to consume message from the run queue and continue working without work-stealing for a small fraction of time. Think like this is a congestion unblocking mechanism. Works pretty well.</p>
+<p>What are the differences ? Let’s have a look!</p>
 
-<p>1- Bastion executor relies mostly on interconnect messages and tries to do single clock advancement without OS migration of threads. We are pinning our threads so we need to know how many vCPU is going on and maintain thread pinning on the fly. In this release, we have improved pinning API a lot.</p>
+<p><strong>0-</strong> When under contention we skip work-stealing. We directly force queue consumers to handle messages coming from the run queue and continue working without work-stealing for a small fraction of time. Think of it like a congestion unblocking mechanism. It works pretty well so far! Works pretty well.</p>
 
-<p>2- We have a blocking pool based on the paper <a href="https://ieeexplore.ieee.org/document/5951889">A Novel Predictive and Self–Adaptive Dynamic Thread Pool Management</a> and you can see this implementation documentation <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html">here</a>. That’s our blocking congestion prevention mechanism and it enables high throughput for the blocking operation under various cases ranging from long running, spike oriented, bursting, decaying task timing behaviors.
-Moreover, this thread pool is also <a href="https://github.com/bastion-rs/bastion/pull/141/files#diff-d7ca8f060f95b61604b5bd4036546196R334-R349">configurable with environment variable</a> for constrained environments.</p>
+<p><strong>1-</strong> Bastion executor relies mostly on interconnect messages and tries to do single clock advancement without OS migration of threads. We are pinning our threads which means we need to be aware of how many vCPU Bastion is running on, and we maintain thread pinning on the fly. A lot of efforts were put into our pinning API in this release.</p>
 
-<p>3- Improved performance by having less syscalls to kernel for yielding the time back to OS. Now we are passively looking for opportunity to execute, and yield back once as soon as possible.</p>
+<p><strong>2-</strong> We have a blocking pool based on the paper <a href="https://ieeexplore.ieee.org/document/5951889">A Novel Predictive and Self–Adaptive Dynamic Thread Pool Management</a> and you can see this implementation documentation <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/index.html">here</a>. That’s our blocking congestion prevention mechanism and it enables high throughput for the blocking operation under various cases ranging from long running, spike oriented, bursting, decaying task timing behaviors.
+Moreover, this thread pool is also <a href="https://github.com/bastion-rs/bastion/pull/141/files#diff-d7ca8f060f95b61604b5bd4036546196R334-R349">configurable with an environment variable</a> for constrained environments.</p>
 
-<p>4- Added convenience methods for blocking pool with <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/fn.spawn_blocking.html">spawn_blocking</a> in addition to existing <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/pool/fn.spawn.html">spawn</a>, <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/run/fn.run.html">run</a>. You don’t need to surface API to try out Bastion’s Executor. You can only add <code class="highlighter-rouge">bastion-executor</code> to your <code class="highlighter-rouge">Cargo.toml</code> and you are good to go!</p>
+<p><strong>3-</strong> We improved the performance by making less syscalls when yielding. We are now passively looking for an opportunity to run tasks, and yield only once, as soon as possible.</p>
+
+<p><strong>4-</strong> Added convenience methods for blocking pool with <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/blocking/fn.spawn_blocking.html">spawn_blocking</a> in addition to existing <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/pool/fn.spawn.html">spawn</a>, <a href="https://docs.rs/bastion-executor/0.3.4/bastion_executor/run/fn.run.html">run</a>. If you don’t want any supervision and restart mechanisms, and are just looking for a quick dive into bastion, add <code class="highlighter-rouge">bastion-executor</code> to your <code class="highlighter-rouge">Cargo.toml</code> file and you can start spawning sync and async tasks in no time !</p>
 
 <hr />
 
@@ -233,10 +241,10 @@ Moreover, this thread pool is also <a href="https://github.com/bastion-rs/bastio
 
 <h2 id="a-big-thanks">A Big Thanks</h2>
 
-<p>Yes, a big thanks, to everyone who enabled this project to run, supported, wrote code and make it production grade in plenty of aspects. Thanks for everything and thanks for keeping the road with us! We are getting bigger and I really like how people are passionate about what are we trying to do here! I can’t thank to plenty of people who share his/her/their ideas on our Discord channel, on issues and over the PRs! Thank you all, let’s continue building together! 2020 is a year that we (as Rust community) will unite over plenty of subjects, and topics. I like to close my thanks with these words (though this was a famous US Marshall Plan propaganda, this sentence pretty much sums up all of us as people working on Rust): <strong>Whatever the weather we must move together!</strong></p>
+<p>Yes, a big thanks, to everyone who enabled this project to run, supported, wrote code and made it production grade in plenty of aspects. Thanks for everything and thanks for paving the road with us! We are getting bigger and I really like how passionate people are about what are we trying to do here! I can’t thank enough everyone who shared their ideas on <a href="https://discord.gg/DqRqtRT">our Discord channel</a>, on issues and over the PRs! Thank you all, let’s continue building together! 2020 is a year that we (as Rust community) will unite over plenty of subjects, and topics. I like to close my thanks with these words (though this was a famous US Marshall Plan propaganda, this sentence pretty much sums up all of us as people working on Rust): <strong>Whatever the weather we must move together!</strong></p>
 
 <h2 id="conclusion">Conclusion</h2>
-<p>In the upcoming blog posts, we will talk about how Bastion runtime is designed, which kind of design decisions are made and what are our newest initiatives. Meanwhile we are expanding our ecosystem with various projects and open to the maintainers who wants to work on distributed systems and data processing. We have pretty high aims for our projects, so come join us! Join our <a href="https://discordapp.com/invite/DqRqtRT">Discord</a>, look to our issues and projects at our org’s GitHub!</p>
+<p>In the upcoming blog posts, we will talk about how the Bastion runtime is designed, which design decisions were made (and why) and our newest initiatives and next goals. Meanwhile we are expanding our ecosystem with various projects and would love to welcome maintainers who want to work on distributed systems and data processing. We have pretty high aims for our projects, and would love to help and mentor you. Come join us! Join our <a href="https://discordapp.com/invite/DqRqtRT">Discord</a>, have a look at our issues and projects <a href="https://github.com/bastion-rs">our org’s GitHub</a>!</p>
 
   </article>
 
