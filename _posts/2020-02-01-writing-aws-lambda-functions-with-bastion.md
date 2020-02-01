@@ -26,7 +26,7 @@ $ npm i -g serverless
 $ npm i -D serverless-rust
 ```
 
-Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently make GET requests. And returns their body strings whenever they are available. Main code for lambda is in `page_fetcher/src/main.rs`. Let's take a look at the Lambda code and walk through it:
+Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently making GET requests. Immediately returns their body strings whenever they are available. Main code for lambda is in `page_fetcher/src/main.rs`. Let's take a look at the Lambda code and walk through it:
 
 ```rust
 /// This is the JSON payload we expect to be passed to us by the client accessing our lambda.
@@ -91,7 +91,7 @@ fn dispatcher(
 
 Let's break this dispatcher down. Lambda runtime unfortunately doesn't allow us to write direct runtimeless lambda application so we need to write a `dispatcher` that will be registered to underlying runtime. So this is our dispatcher that will use the underlying runtime to dispatch requests to Bastion for processing.
 
-We created a unbounded channel for receiving completion that we made requests to all given sites and received a response from each other:
+We created an unbounded channel for receiving completion that we made requests to all given sites and received a response from each other:
 
 ```rust
 let (p, mut c) = unbounded::<bool>();
@@ -102,7 +102,7 @@ We are creating a children group to setup workers and fan out requests to worker
 let workers = worker_pool(payload.sites.len());
 ```
 
-Above line sets up workers using `worker_pool` method with given amount of sites.
+The line above sets up workers using `worker_pool` method with given amount of sites. We will explain setup method later.
 
 ```rust
 async move {
@@ -121,11 +121,11 @@ async move {
 }
 ```
 
-We link each worker and the site. Using `ask` we are sending site to the workers. Here we need to know the difference between `ask` and `tell`. `tell` method works like a `fire and forget` messaging system. Message passed with tell won't expect response from receiver actor. In Bastion we have `ask` and `ask_anonymously`. Latter is usable across `BastionContext`'s. In Bastion `context` is a hierarchy branch management which allows granular microconcurrency between children, child and supervisors. `ask` is usable within the same context which allows us to directly identify children inside the same hierarchy. We are using `ask_anonymously` in here because `workers` and `dispatcher` are separate branches.
+We link each worker and the site. Using `ask`, we are sending site to the workers. Here, we need to know the difference between `ask` and `tell`. `tell` method works like a `fire and forget` messaging system. Message passed with `tell` won't expect response from the message receiving actor. In Bastion we have `ask` and `ask_anonymously`. Latter is usable across `BastionContext`'s. What we call `context` is basically a hierarchy branch manager which allows granular microconcurrency between children, child and supervisors. `ask` is usable within the same context which allows us to directly identify children inside the same hierarchy. We are using `ask_anonymously` in here because `workers` and `dispatcher` are separate branches.
 
-Our workers are sending back the body. Even though we are not using it we wait for the response from all the workers. If we don't wait inside the for loop order will be different across responses. In Bastion order of messages are belong to user's code.
+Our workers are sending back the body. Even though we are not using it we wait for the response from all the workers. If we don't wait inside the for loop, order will be different across responses. In Bastion order of messages belong to user's code.
 
-After these explanation for the `dispatcher`. Let's take a look at the workers:
+After these explanations for the `dispatcher`. Let's take a look at the workers:
 
 -------
 
@@ -188,7 +188,7 @@ Then we are giving the actor body:
 })
 ```
 
-In this body you might realize that we receive messages with **[msg!](https://docs.rs/bastion/0.3.4/bastion/macro.msg.html)** macro. And it has an interesting syntax. While designing Bastion we've thought about `tell`, `ask` and `broadcast` scenarios between actors. `=!>` corresponds to asked messages. So as you know we've asked our workers to fetch a site. We are receiving this match from `ask` arm of our mailbox.
+In this body you might have realized that we receive messages with **[msg!](https://docs.rs/bastion/0.3.4/bastion/macro.msg.html)** macro. And it has an interesting syntax. While designing Bastion we've thought about `tell`, `ask` and `broadcast` scenarios between actors. `=!>` corresponds to asked messages. So as you know we've asked our workers to fetch a site. We are receiving this match from `ask` arm of our mailbox.
 
 Oh yes, we are using [surf](https://docs.rs/surf/1.0.3/surf/) to issue our call. and returning the response with our `answer!` macro.
 

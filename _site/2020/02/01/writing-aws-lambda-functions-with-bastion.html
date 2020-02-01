@@ -97,7 +97,7 @@
 <span class="nv">$ </span>npm i <span class="nt">-D</span> serverless-rust
 </code></pre></div></div>
 
-<p>Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently make GET requests. And returns their body strings whenever they are available. Main code for lambda is in <code class="highlighter-rouge">page_fetcher/src/main.rs</code>. Let’s take a look at the Lambda code and walk through it:</p>
+<p>Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently making GET requests. Immediately returns their body strings whenever they are available. Main code for lambda is in <code class="highlighter-rouge">page_fetcher/src/main.rs</code>. Let’s take a look at the Lambda code and walk through it:</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/// This is the JSON payload we expect to be passed to us by the client accessing our lambda.</span>
 <span class="nd">#[derive(Deserialize,</span> <span class="nd">Debug)]</span>
@@ -159,7 +159,7 @@
 
 <p>Let’s break this dispatcher down. Lambda runtime unfortunately doesn’t allow us to write direct runtimeless lambda application so we need to write a <code class="highlighter-rouge">dispatcher</code> that will be registered to underlying runtime. So this is our dispatcher that will use the underlying runtime to dispatch requests to Bastion for processing.</p>
 
-<p>We created a unbounded channel for receiving completion that we made requests to all given sites and received a response from each other:</p>
+<p>We created an unbounded channel for receiving completion that we made requests to all given sites and received a response from each other:</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="k">mut</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="nn">unbounded</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">();</span>
 </code></pre></div></div>
@@ -168,7 +168,7 @@
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">workers</span> <span class="o">=</span> <span class="nf">worker_pool</span><span class="p">(</span><span class="n">payload</span><span class="py">.sites</span><span class="nf">.len</span><span class="p">());</span>
 </code></pre></div></div>
 
-<p>Above line sets up workers using <code class="highlighter-rouge">worker_pool</code> method with given amount of sites.</p>
+<p>The line above sets up workers using <code class="highlighter-rouge">worker_pool</code> method with given amount of sites. We will explain setup method later.</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
     <span class="nd">info!</span><span class="p">(</span><span class="s">"Dispatching started"</span><span class="p">);</span>
@@ -186,11 +186,11 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>We link each worker and the site. Using <code class="highlighter-rouge">ask</code> we are sending site to the workers. Here we need to know the difference between <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">tell</code>. <code class="highlighter-rouge">tell</code> method works like a <code class="highlighter-rouge">fire and forget</code> messaging system. Message passed with tell won’t expect response from receiver actor. In Bastion we have <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">ask_anonymously</code>. Latter is usable across <code class="highlighter-rouge">BastionContext</code>’s. In Bastion <code class="highlighter-rouge">context</code> is a hierarchy branch management which allows granular microconcurrency between children, child and supervisors. <code class="highlighter-rouge">ask</code> is usable within the same context which allows us to directly identify children inside the same hierarchy. We are using <code class="highlighter-rouge">ask_anonymously</code> in here because <code class="highlighter-rouge">workers</code> and <code class="highlighter-rouge">dispatcher</code> are separate branches.</p>
+<p>We link each worker and the site. Using <code class="highlighter-rouge">ask</code>, we are sending site to the workers. Here, we need to know the difference between <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">tell</code>. <code class="highlighter-rouge">tell</code> method works like a <code class="highlighter-rouge">fire and forget</code> messaging system. Message passed with <code class="highlighter-rouge">tell</code> won’t expect response from the message receiving actor. In Bastion we have <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">ask_anonymously</code>. Latter is usable across <code class="highlighter-rouge">BastionContext</code>’s. What we call <code class="highlighter-rouge">context</code> is basically a hierarchy branch manager which allows granular microconcurrency between children, child and supervisors. <code class="highlighter-rouge">ask</code> is usable within the same context which allows us to directly identify children inside the same hierarchy. We are using <code class="highlighter-rouge">ask_anonymously</code> in here because <code class="highlighter-rouge">workers</code> and <code class="highlighter-rouge">dispatcher</code> are separate branches.</p>
 
-<p>Our workers are sending back the body. Even though we are not using it we wait for the response from all the workers. If we don’t wait inside the for loop order will be different across responses. In Bastion order of messages are belong to user’s code.</p>
+<p>Our workers are sending back the body. Even though we are not using it we wait for the response from all the workers. If we don’t wait inside the for loop, order will be different across responses. In Bastion order of messages belong to user’s code.</p>
 
-<p>After these explanation for the <code class="highlighter-rouge">dispatcher</code>. Let’s take a look at the workers:</p>
+<p>After these explanations for the <code class="highlighter-rouge">dispatcher</code>. Let’s take a look at the workers:</p>
 
 <hr />
 
@@ -250,7 +250,7 @@
 <span class="p">})</span>
 </code></pre></div></div>
 
-<p>In this body you might realize that we receive messages with <strong><a href="https://docs.rs/bastion/0.3.4/bastion/macro.msg.html">msg!</a></strong> macro. And it has an interesting syntax. While designing Bastion we’ve thought about <code class="highlighter-rouge">tell</code>, <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">broadcast</code> scenarios between actors. <code class="highlighter-rouge">=!&gt;</code> corresponds to asked messages. So as you know we’ve asked our workers to fetch a site. We are receiving this match from <code class="highlighter-rouge">ask</code> arm of our mailbox.</p>
+<p>In this body you might have realized that we receive messages with <strong><a href="https://docs.rs/bastion/0.3.4/bastion/macro.msg.html">msg!</a></strong> macro. And it has an interesting syntax. While designing Bastion we’ve thought about <code class="highlighter-rouge">tell</code>, <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">broadcast</code> scenarios between actors. <code class="highlighter-rouge">=!&gt;</code> corresponds to asked messages. So as you know we’ve asked our workers to fetch a site. We are receiving this match from <code class="highlighter-rouge">ask</code> arm of our mailbox.</p>
 
 <p>Oh yes, we are using <a href="https://docs.rs/surf/1.0.3/surf/">surf</a> to issue our call. and returning the response with our <code class="highlighter-rouge">answer!</code> macro.</p>
 

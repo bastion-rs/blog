@@ -6,8 +6,8 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 01 Feb 2020 17:00:55 +0100</pubDate>
-    <lastBuildDate>Sat, 01 Feb 2020 17:00:55 +0100</lastBuildDate>
+    <pubDate>Sat, 01 Feb 2020 21:19:24 +0100</pubDate>
+    <lastBuildDate>Sat, 01 Feb 2020 21:19:24 +0100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -31,7 +31,7 @@
 &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm i &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; serverless-rust
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently make GET requests. And returns their body strings whenever they are available. Main code for lambda is in &lt;code class=&quot;highlighter-rouge&quot;&gt;page_fetcher/src/main.rs&lt;/code&gt;. Let’s take a look at the Lambda code and walk through it:&lt;/p&gt;
+&lt;p&gt;Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently making GET requests. Immediately returns their body strings whenever they are available. Main code for lambda is in &lt;code class=&quot;highlighter-rouge&quot;&gt;page_fetcher/src/main.rs&lt;/code&gt;. Let’s take a look at the Lambda code and walk through it:&lt;/p&gt;
 
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;/// This is the JSON payload we expect to be passed to us by the client accessing our lambda.&lt;/span&gt;
 &lt;span class=&quot;nd&quot;&gt;#[derive(Deserialize,&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;Debug)]&lt;/span&gt;
@@ -93,7 +93,7 @@
 
 &lt;p&gt;Let’s break this dispatcher down. Lambda runtime unfortunately doesn’t allow us to write direct runtimeless lambda application so we need to write a &lt;code class=&quot;highlighter-rouge&quot;&gt;dispatcher&lt;/code&gt; that will be registered to underlying runtime. So this is our dispatcher that will use the underlying runtime to dispatch requests to Bastion for processing.&lt;/p&gt;
 
-&lt;p&gt;We created a unbounded channel for receiving completion that we made requests to all given sites and received a response from each other:&lt;/p&gt;
+&lt;p&gt;We created an unbounded channel for receiving completion that we made requests to all given sites and received a response from each other:&lt;/p&gt;
 
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;unbounded&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;bool&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -102,7 +102,7 @@
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;workers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;worker_pool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;payload&lt;/span&gt;&lt;span class=&quot;py&quot;&gt;.sites&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Above line sets up workers using &lt;code class=&quot;highlighter-rouge&quot;&gt;worker_pool&lt;/code&gt; method with given amount of sites.&lt;/p&gt;
+&lt;p&gt;The line above sets up workers using &lt;code class=&quot;highlighter-rouge&quot;&gt;worker_pool&lt;/code&gt; method with given amount of sites. We will explain setup method later.&lt;/p&gt;
 
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;move&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;nd&quot;&gt;info!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Dispatching started&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
@@ -120,11 +120,11 @@
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;We link each worker and the site. Using &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; we are sending site to the workers. Here we need to know the difference between &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tell&lt;/code&gt;. &lt;code class=&quot;highlighter-rouge&quot;&gt;tell&lt;/code&gt; method works like a &lt;code class=&quot;highlighter-rouge&quot;&gt;fire and forget&lt;/code&gt; messaging system. Message passed with tell won’t expect response from receiver actor. In Bastion we have &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;ask_anonymously&lt;/code&gt;. Latter is usable across &lt;code class=&quot;highlighter-rouge&quot;&gt;BastionContext&lt;/code&gt;’s. In Bastion &lt;code class=&quot;highlighter-rouge&quot;&gt;context&lt;/code&gt; is a hierarchy branch management which allows granular microconcurrency between children, child and supervisors. &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; is usable within the same context which allows us to directly identify children inside the same hierarchy. We are using &lt;code class=&quot;highlighter-rouge&quot;&gt;ask_anonymously&lt;/code&gt; in here because &lt;code class=&quot;highlighter-rouge&quot;&gt;workers&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;dispatcher&lt;/code&gt; are separate branches.&lt;/p&gt;
+&lt;p&gt;We link each worker and the site. Using &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt;, we are sending site to the workers. Here, we need to know the difference between &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tell&lt;/code&gt;. &lt;code class=&quot;highlighter-rouge&quot;&gt;tell&lt;/code&gt; method works like a &lt;code class=&quot;highlighter-rouge&quot;&gt;fire and forget&lt;/code&gt; messaging system. Message passed with &lt;code class=&quot;highlighter-rouge&quot;&gt;tell&lt;/code&gt; won’t expect response from the message receiving actor. In Bastion we have &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;ask_anonymously&lt;/code&gt;. Latter is usable across &lt;code class=&quot;highlighter-rouge&quot;&gt;BastionContext&lt;/code&gt;’s. What we call &lt;code class=&quot;highlighter-rouge&quot;&gt;context&lt;/code&gt; is basically a hierarchy branch manager which allows granular microconcurrency between children, child and supervisors. &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; is usable within the same context which allows us to directly identify children inside the same hierarchy. We are using &lt;code class=&quot;highlighter-rouge&quot;&gt;ask_anonymously&lt;/code&gt; in here because &lt;code class=&quot;highlighter-rouge&quot;&gt;workers&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;dispatcher&lt;/code&gt; are separate branches.&lt;/p&gt;
 
-&lt;p&gt;Our workers are sending back the body. Even though we are not using it we wait for the response from all the workers. If we don’t wait inside the for loop order will be different across responses. In Bastion order of messages are belong to user’s code.&lt;/p&gt;
+&lt;p&gt;Our workers are sending back the body. Even though we are not using it we wait for the response from all the workers. If we don’t wait inside the for loop, order will be different across responses. In Bastion order of messages belong to user’s code.&lt;/p&gt;
 
-&lt;p&gt;After these explanation for the &lt;code class=&quot;highlighter-rouge&quot;&gt;dispatcher&lt;/code&gt;. Let’s take a look at the workers:&lt;/p&gt;
+&lt;p&gt;After these explanations for the &lt;code class=&quot;highlighter-rouge&quot;&gt;dispatcher&lt;/code&gt;. Let’s take a look at the workers:&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -184,7 +184,7 @@
 &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;In this body you might realize that we receive messages with &lt;strong&gt;&lt;a href=&quot;https://docs.rs/bastion/0.3.4/bastion/macro.msg.html&quot;&gt;msg!&lt;/a&gt;&lt;/strong&gt; macro. And it has an interesting syntax. While designing Bastion we’ve thought about &lt;code class=&quot;highlighter-rouge&quot;&gt;tell&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;broadcast&lt;/code&gt; scenarios between actors. &lt;code class=&quot;highlighter-rouge&quot;&gt;=!&amp;gt;&lt;/code&gt; corresponds to asked messages. So as you know we’ve asked our workers to fetch a site. We are receiving this match from &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; arm of our mailbox.&lt;/p&gt;
+&lt;p&gt;In this body you might have realized that we receive messages with &lt;strong&gt;&lt;a href=&quot;https://docs.rs/bastion/0.3.4/bastion/macro.msg.html&quot;&gt;msg!&lt;/a&gt;&lt;/strong&gt; macro. And it has an interesting syntax. While designing Bastion we’ve thought about &lt;code class=&quot;highlighter-rouge&quot;&gt;tell&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;broadcast&lt;/code&gt; scenarios between actors. &lt;code class=&quot;highlighter-rouge&quot;&gt;=!&amp;gt;&lt;/code&gt; corresponds to asked messages. So as you know we’ve asked our workers to fetch a site. We are receiving this match from &lt;code class=&quot;highlighter-rouge&quot;&gt;ask&lt;/code&gt; arm of our mailbox.&lt;/p&gt;
 
 &lt;p&gt;Oh yes, we are using &lt;a href=&quot;https://docs.rs/surf/1.0.3/surf/&quot;&gt;surf&lt;/a&gt; to issue our call. and returning the response with our &lt;code class=&quot;highlighter-rouge&quot;&gt;answer!&lt;/code&gt; macro.&lt;/p&gt;
 
