@@ -4,7 +4,7 @@ title: "Writing AWS Lambda Functions with Bastion"
 author: Written by Mahmut Bulut
 ---
 
-![Bastion and AWS Lambdas](../../../images/bastion_and_lambda.png)
+![Bastion and AWS Lambdas](https://github.com/bastion-rs/blog/blob/master/images/bastion_and_lambda.png)
 
 In this post, we will look how AWS Lambda Functions can be implemented using Bastion. AWS Lambda functions are well known serverless platform used for tasks varying from infrastructure management, serving APIs, data processing to orchestration tasks.
 
