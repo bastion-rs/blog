@@ -8,7 +8,9 @@ author: Written by Mahmut Bulut
 
 In this post, we will look how AWS Lambda Functions can be implemented using Bastion. AWS Lambda functions are well known serverless platform used for tasks varying from infrastructure management, serving APIs, data processing to orchestration tasks.
 
-Let's start! First let's clone the Bastion showcase repository:
+Let's start! We are going to use the [Bastion AWS Lambda Example](https://github.com/bastion-rs/showcase/tree/master/bastion-aws-lambda) in our showcase repo.
+
+First let's clone the Bastion showcase repository:
 ```bash
 $ git clone git@github.com:bastion-rs/showcase.git
 ```
