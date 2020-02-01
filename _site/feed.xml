@@ -6,13 +6,13 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 01 Feb 2020 15:59:30 +0100</pubDate>
-    <lastBuildDate>Sat, 01 Feb 2020 15:59:30 +0100</lastBuildDate>
+    <pubDate>Sat, 01 Feb 2020 16:02:02 +0100</pubDate>
+    <lastBuildDate>Sat, 01 Feb 2020 16:02:02 +0100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
         <title>Writing AWS Lambda Functions with Bastion</title>
-        <description>&lt;p&gt;&lt;img src=&quot;https://github.com/bastion-rs/blog/blob/master/images/bastion_and_lambda.png&quot; alt=&quot;Bastion and AWS Lambdas&quot; /&gt;&lt;/p&gt;
+        <description>&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/bastion-rs/blog/master/images/bastion_and_lambda.png&quot; alt=&quot;Bastion and AWS Lambdas&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;In this post, we will look how AWS Lambda Functions can be implemented using Bastion. AWS Lambda functions are well known serverless platform used for tasks varying from infrastructure management, serving APIs, data processing to orchestration tasks.&lt;/p&gt;
 
