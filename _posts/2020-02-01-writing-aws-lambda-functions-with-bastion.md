@@ -17,7 +17,7 @@ $ git clone git@github.com:bastion-rs/showcase.git
 
 Get into the containing directory of our example lambda declaration:
 ```bash
-$ cd showcase-zero/bastion-aws-lambda
+$ cd showcase/bastion-aws-lambda
 ```
 
 We are using `serverless` utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by `serverless.yml`. For installing `serverless` and its dependencies for Rust environment we will do:
