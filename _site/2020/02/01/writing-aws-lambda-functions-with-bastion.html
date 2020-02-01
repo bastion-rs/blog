@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Writing AWS Lambda Functions with Bastion - Bastion-rs blog</title>
+    <meta name="description" content="Welcome to the official bastion-rs blog!
+">
+    <link rel="alternate" type="application/rss+xml" title="Writing AWS Lambda Functions with Bastion"
+        href="/feed.xml" />
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/center-img.css">
+    <link rel="canonical" href="http://localhost:4000/2020/02/01/writing-aws-lambda-functions-with-bastion.html">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/images/safari-pinned-tab.svg>
+    <meta name=" msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@bastion_rs" />
+    <meta name="twitter:title" content="Writing AWS Lambda Functions with Bastion" />
+    
+    <meta name="twitter:description" content="Welcome to the official bastion-rs blog!
+" />
+    
+    <meta name="twitter:url" content="https://bastion-rs/2020/02/01/writing-aws-lambda-functions-with-bastion.html">
+
+</head>
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/"><img id="site-logo" src="https://raw.githubusercontent.com/bastion-rs/bastion-rs.github.io/master/src/assets/images/bastion-logo.png"/> Bastion-rs blog</a>
+
+    <!--<nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>-->
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Writing AWS Lambda Functions with Bastion</h1>
+    <p class="post-meta">Feb 1, 2020 • Written by Mahmut Bulut</p>
+  </header>
+
+  <article class="post-content">
+    <p><img src="../../../images/bastion_and_lambda.png" alt="Bastion and AWS Lambdas" /></p>
+
+<p>In this post, we will look how AWS Lambda Functions can be implemented using Bastion. AWS Lambda functions are well known serverless platform used for tasks varying from infrastructure management, serving APIs, data processing to orchestration tasks.</p>
+
+<p>Let’s start! First let’s clone the Bastion showcase repository:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone git@github.com:bastion-rs/showcase.git
+</code></pre></div></div>
+
+<p>Get into the containing directory of our example lambda declaration:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>showcase-zero/bastion-aws-lambda
+</code></pre></div></div>
+
+<p>We are using <code class="highlighter-rouge">serverless</code> utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by <code class="highlighter-rouge">serverless.yml</code>. For installing <code class="highlighter-rouge">serverless</code> and its dependencies for Rust environment we will do:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>npm i <span class="nt">-g</span> serverless
+<span class="nv">$ </span>npm i <span class="nt">-D</span> serverless-rust
+</code></pre></div></div>
+
+<p>Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently make GET requests. And returns their body strings whenever they are available. Main code for lambda is in <code class="highlighter-rouge">page_fetcher/src/main.rs</code>. Let’s take a look at the Lambda code and walk through it:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/// This is the JSON payload we expect to be passed to us by the client accessing our lambda.</span>
+<span class="nd">#[derive(Deserialize,</span> <span class="nd">Debug)]</span>
+<span class="k">struct</span> <span class="n">InputPayload</span> <span class="p">{</span>
+    <span class="n">sites</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This is our input payload that contains sites that will be requested when lambda is triggered.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/// This is the JSON payload we will return back to the client if the request was successful.</span>
+<span class="nd">#[derive(Serialize,</span> <span class="nd">Debug)]</span>
+<span class="k">struct</span> <span class="n">OutputPayload</span> <span class="p">{</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">String</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>When we process sites and receive body of the sites we are going to return the lambda status. Think that these are the cluster internal applications which we concurrently trigger their endpoints. Instead of sites you can use your cluster internal naming.</p>
+
+<hr />
+
+<h3 id="message-handler-dispatcher">Message Handler (Dispatcher)</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">dispatcher</span><span class="p">(</span>
+    <span class="n">payload</span><span class="p">:</span> <span class="n">InputPayload</span><span class="p">,</span>
+    <span class="mi">_</span><span class="n">c</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span>
+<span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">OutputPayload</span><span class="p">,</span> <span class="n">HandlerError</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="k">mut</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="nn">unbounded</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">();</span>
+
+    <span class="nn">Bastion</span><span class="p">::</span><span class="nf">children</span><span class="p">(|</span><span class="n">children</span><span class="p">:</span> <span class="n">Children</span><span class="p">|</span> <span class="p">{</span>
+        <span class="n">children</span><span class="nf">.with_exec</span><span class="p">(</span><span class="k">move</span> <span class="p">|</span><span class="mi">_</span><span class="n">ctx</span><span class="p">:</span> <span class="n">BastionContext</span><span class="p">|</span> <span class="p">{</span>
+            <span class="k">let</span> <span class="n">sites</span> <span class="o">=</span> <span class="n">payload</span><span class="py">.sites</span><span class="nf">.clone</span><span class="p">();</span>
+            <span class="k">let</span> <span class="n">workers</span> <span class="o">=</span> <span class="nf">worker_pool</span><span class="p">(</span><span class="n">payload</span><span class="py">.sites</span><span class="nf">.len</span><span class="p">());</span>
+            <span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="nf">.clone</span><span class="p">();</span>
+
+            <span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+                <span class="nd">info!</span><span class="p">(</span><span class="s">"Dispatching started"</span><span class="p">);</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">site</span><span class="p">)</span> <span class="n">in</span> <span class="n">workers</span><span class="nf">.elems</span><span class="p">()</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.zip</span><span class="p">(</span><span class="n">sites</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nd">info!</span><span class="p">(</span><span class="s">"Site sent for processing!"</span><span class="p">);</span>
+                    <span class="k">let</span> <span class="n">answer</span> <span class="o">=</span> <span class="n">worker</span><span class="nf">.ask_anonymously</span><span class="p">(</span><span class="n">site</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+                    <span class="c">// Or use the returned body</span>
+                    <span class="k">let</span> <span class="mi">_</span> <span class="o">=</span> <span class="n">answer</span><span class="py">.await</span><span class="nf">.unwrap</span><span class="p">();</span>
+                <span class="p">}</span>
+
+                <span class="k">let</span> <span class="mi">_</span> <span class="o">=</span> <span class="n">p</span><span class="nf">.unbounded_send</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+                <span class="nf">Ok</span><span class="p">(())</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">})</span><span class="nf">.unwrap</span><span class="p">();</span>
+
+    <span class="c">// Wait for completion signal OR data itself</span>
+    <span class="k">while</span> <span class="k">let</span> <span class="nf">Err</span><span class="p">(</span><span class="mi">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="nf">.try_next</span><span class="p">()</span> <span class="p">{}</span>
+
+    <span class="nf">Ok</span><span class="p">(</span><span class="n">OutputPayload</span> <span class="p">{</span> <span class="n">status</span><span class="p">:</span> <span class="s">"OK"</span><span class="nf">.into</span><span class="p">()</span> <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Let’s break this dispatcher down. Lambda runtime unfortunately doesn’t allow us to write direct runtimeless lambda application so we need to write a <code class="highlighter-rouge">dispatcher</code> that will be registered to underlying runtime. So this is our dispatcher that will use the underlying runtime to dispatch requests to Bastion for processing.</p>
+
+<p>We created a unbounded channel for receiving completion that we made requests to all given sites and received a response from each other:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="k">mut</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="nn">unbounded</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>We are creating a children group to setup workers and fan out requests to workers. So we will make our workers run individually:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">workers</span> <span class="o">=</span> <span class="nf">worker_pool</span><span class="p">(</span><span class="n">payload</span><span class="py">.sites</span><span class="nf">.len</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>Above line sets up workers using <code class="highlighter-rouge">worker_pool</code> method with given amount of sites.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+    <span class="nd">info!</span><span class="p">(</span><span class="s">"Dispatching started"</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">site</span><span class="p">)</span> <span class="n">in</span> <span class="n">workers</span><span class="nf">.elems</span><span class="p">()</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.zip</span><span class="p">(</span><span class="n">sites</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nd">info!</span><span class="p">(</span><span class="s">"Site sent for processing!"</span><span class="p">);</span>
+        <span class="k">let</span> <span class="n">answer</span> <span class="o">=</span> <span class="n">worker</span><span class="nf">.ask_anonymously</span><span class="p">(</span><span class="n">site</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+        <span class="c">// Or use the returned body</span>
+        <span class="k">let</span> <span class="mi">_</span> <span class="o">=</span> <span class="n">answer</span><span class="py">.await</span><span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">let</span> <span class="mi">_</span> <span class="o">=</span> <span class="n">p</span><span class="nf">.unbounded_send</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+    <span class="nf">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We link each worker and the site. Using <code class="highlighter-rouge">ask</code> we are sending site to the workers. Here we need to know the difference between <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">tell</code>. <code class="highlighter-rouge">tell</code> method works like a <code class="highlighter-rouge">fire and forget</code> messaging system. Message passed with tell won’t expect response from receiver actor. In Bastion we have <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">ask_anonymously</code>. Latter is usable across <code class="highlighter-rouge">BastionContext</code>’s. In Bastion <code class="highlighter-rouge">context</code> is a hierarchy branch management which allows granular microconcurrency between children, child and supervisors. <code class="highlighter-rouge">ask</code> is usable within the same context which allows us to directly identify children inside the same hierarchy. We are using <code class="highlighter-rouge">ask_anonymously</code> in here because <code class="highlighter-rouge">workers</code> and <code class="highlighter-rouge">dispatcher</code> are separate branches.</p>
+
+<p>Our workers are sending back the body. Even though we are not using it we wait for the response from all the workers. If we don’t wait inside the for loop order will be different across responses. In Bastion order of messages are belong to user’s code.</p>
+
+<p>After these explanation for the <code class="highlighter-rouge">dispatcher</code>. Let’s take a look at the workers:</p>
+
+<hr />
+
+<h3 id="worker-actors">Worker Actors</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">worker_pool</span><span class="p">(</span><span class="n">pool_size</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ChildrenRef</span> <span class="p">{</span>
+    <span class="nn">Bastion</span><span class="p">::</span><span class="nf">children</span><span class="p">(|</span><span class="n">children</span><span class="p">:</span> <span class="n">Children</span><span class="p">|</span> <span class="p">{</span>
+        <span class="n">children</span>
+            <span class="nf">.with_redundancy</span><span class="p">(</span><span class="n">pool_size</span><span class="p">)</span>
+            <span class="nf">.with_exec</span><span class="p">(</span><span class="k">move</span> <span class="p">|</span><span class="n">ctx</span><span class="p">:</span> <span class="n">BastionContext</span><span class="p">|</span> <span class="p">{</span>
+                <span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+                    <span class="nd">info!</span><span class="p">(</span><span class="s">"Worker started!"</span><span class="p">);</span>
+
+                    <span class="c">// Start receiving work</span>
+                    <span class="k">loop</span> <span class="p">{</span>
+                        <span class="nd">msg!</span> <span class="p">{</span> <span class="n">ctx</span><span class="nf">.recv</span><span class="p">()</span><span class="py">.await</span><span class="o">?</span><span class="p">,</span>
+                            <span class="n">site</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=!&gt;</span> <span class="p">{</span>
+                                <span class="nd">info!</span><span class="p">(</span><span class="s">"Received site: {}!"</span><span class="p">,</span> <span class="n">site</span><span class="nf">.clone</span><span class="p">());</span>
+                                <span class="k">let</span> <span class="n">body</span> <span class="o">=</span> <span class="nn">surf</span><span class="p">::</span><span class="nf">get</span><span class="p">(</span><span class="n">site</span><span class="nf">.clone</span><span class="p">())</span><span class="nf">.recv_string</span><span class="p">()</span><span class="py">.await</span><span class="nf">.unwrap</span><span class="p">();</span>
+                                <span class="nd">warn!</span><span class="p">(</span><span class="s">"Site: {} Body: {}"</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">body</span><span class="p">);</span>
+                                <span class="k">let</span> <span class="mi">_</span> <span class="o">=</span> <span class="nd">answer!</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">body</span><span class="p">);</span>
+                            <span class="p">};</span>
+                            <span class="mi">_</span><span class="p">:</span> <span class="mi">_</span> <span class="k">=&gt;</span> <span class="p">();</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+    <span class="p">})</span>
+    <span class="nf">.expect</span><span class="p">(</span><span class="s">"Couldn't start a new children group."</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We are passing the given <code class="highlighter-rouge">pool_size</code> as redundancy:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">children</span>
+    <span class="nf">.with_redundancy</span><span class="p">(</span><span class="n">pool_size</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Then we are giving the actor body:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">.with_exec</span><span class="p">(</span><span class="k">move</span> <span class="p">|</span><span class="n">ctx</span><span class="p">:</span> <span class="n">BastionContext</span><span class="p">|</span> <span class="p">{</span>
+    <span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+        <span class="nd">info!</span><span class="p">(</span><span class="s">"Worker started!"</span><span class="p">);</span>
+
+        <span class="c">// Start receiving work</span>
+        <span class="k">loop</span> <span class="p">{</span>
+            <span class="nd">msg!</span> <span class="p">{</span> <span class="n">ctx</span><span class="nf">.recv</span><span class="p">()</span><span class="py">.await</span><span class="o">?</span><span class="p">,</span>
+                <span class="n">site</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=!&gt;</span> <span class="p">{</span>
+                    <span class="nd">info!</span><span class="p">(</span><span class="s">"Received site: {}!"</span><span class="p">,</span> <span class="n">site</span><span class="nf">.clone</span><span class="p">());</span>
+                    <span class="k">let</span> <span class="n">body</span> <span class="o">=</span> <span class="nn">surf</span><span class="p">::</span><span class="nf">get</span><span class="p">(</span><span class="n">site</span><span class="nf">.clone</span><span class="p">())</span><span class="nf">.recv_string</span><span class="p">()</span><span class="py">.await</span><span class="nf">.unwrap</span><span class="p">();</span>
+                    <span class="nd">warn!</span><span class="p">(</span><span class="s">"Site: {} Body: {}"</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">body</span><span class="p">);</span>
+                    <span class="k">let</span> <span class="mi">_</span> <span class="o">=</span> <span class="nd">answer!</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">body</span><span class="p">);</span>
+                <span class="p">};</span>
+                <span class="mi">_</span><span class="p">:</span> <span class="mi">_</span> <span class="k">=&gt;</span> <span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>In this body you might realize that we receive messages with <strong><a href="https://docs.rs/bastion/0.3.4/bastion/macro.msg.html">msg!</a></strong> macro. And it has an interesting syntax. While designing Bastion we’ve thought about <code class="highlighter-rouge">tell</code>, <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">broadcast</code> scenarios between actors. <code class="highlighter-rouge">=!&gt;</code> corresponds to asked messages. So as you know we’ve asked our workers to fetch a site. We are receiving this match from <code class="highlighter-rouge">ask</code> arm of our mailbox.</p>
+
+<p>Oh yes, we are using <a href="https://docs.rs/surf/1.0.3/surf/">surf</a> to issue our call. and returning the response with our <code class="highlighter-rouge">answer!</code> macro.</p>
+
+<hr />
+
+<h3 id="applications-main">Application’s Main</h3>
+
+<p>These were the methods that were doing the processing. It’s time to take a look at the application protected against crashes. Our main entry:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[fort::root]</span>
+<span class="k">async</span> <span class="k">fn</span> <span class="nf">main</span><span class="p">(</span><span class="mi">_</span><span class="p">:</span> <span class="n">BastionContext</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="mi">_</span> <span class="o">=</span> <span class="nn">simple_logger</span><span class="p">::</span><span class="nf">init_with_level</span><span class="p">(</span><span class="k">log</span><span class="p">::</span><span class="nn">Level</span><span class="p">::</span><span class="n">Info</span><span class="p">);</span>
+    <span class="nd">lambda!</span><span class="p">(</span><span class="n">dispatcher</span><span class="p">);</span>
+
+    <span class="nf">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong><a href="https://github.com/bastion-rs/fort#fort">Fort</a></strong> is a proc macro attribute that supplies fault tolerance to main method and wraps your main method into Bastion. It gives you root context of the Bastion system as argument for further hierarchy and let you run your application in panic handler context. Rest is basically initializing our logging system, and lambda handler registration.</p>
+
+<p>That’s all we have inside the code. For more information take a look at to our <strong><a href="https://docs.rs/bastion/0.3.4/bastion/struct.Bastion.html">Documentation</a></strong>.</p>
+
+<h3 id="testing-locally">Testing locally</h3>
+
+<p>For testing locally what we need to do is:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>serverless invoke <span class="nb">local</span> <span class="nt">-f</span> page_fetcher <span class="nt">-d</span> <span class="se">\</span>
+    <span class="s1">'{
+      "sites": [
+        "https://bastion.rs",
+        "https://blog.bastion.rs",
+        "http://google.com",
+        "https://docs.rs/",
+        "https://crates.io/",
+        "https://twitter.com/",
+        "https://news.ycombinator.com/",
+        "http://play.rust-lang.org/",
+        "http://catb.org/jargon/html/hates.html"
+      ]
+    }'</span>
+</code></pre></div></div>
+
+<p>Then wait for container build finish, artefact extracted, and run inside the container. Then hopefully you will see the lambda logs.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>In this post, we introduced Bastion to AWS Lambda runtime. For your own applications feel free to explore more advanced methods, use message passing with different approaches mentioned above, design your own hierarchy and concurrency nodes. Don’t forget to share your suggestions and ideas with us. Join our <a href="https://discord.gg/DqRqtRT">Discord server</a>, open an <a href="https://github.com/bastion-rs/bastion/issues/new/choose">issue/feature request/support ticket</a> in our GitHub.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <h2 class="footer-heading">By <a href="https://bastion.rs">bastion.rs</a></h2>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/bastion-rs">
+              <span class="icon  icon--github">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282"
+                    d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z" />
+                </svg>
+              </span>
+
+              <span class="username">bastion-rs</span>
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/bastion_rs">
+              <span class="icon  icon--twitter">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282"
+                    d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                  c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z" />
+                </svg>
+              </span>
+
+              <span class="username">bastion_rs</span>
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-3">
+        <p class="text">Welcome to the official bastion-rs blog!
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+  </body>
+
+</html>
