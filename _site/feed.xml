@@ -6,8 +6,8 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sun, 23 Feb 2020 10:58:51 +0100</pubDate>
-    <lastBuildDate>Sun, 23 Feb 2020 10:58:51 +0100</lastBuildDate>
+    <pubDate>Sun, 23 Feb 2020 21:35:28 +0100</pubDate>
+    <lastBuildDate>Sun, 23 Feb 2020 21:35:28 +0100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -62,7 +62,7 @@
 
 &lt;p&gt;Now let’s open a browser and go to &lt;a href=&quot;http://127.0.0.1:8080&quot;&gt;http://127.0.0.1:8080&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/posts/bastion-floating-on-tide/tide-hello-world.png&quot; alt=&quot;Tide hello world!&quot; class=&quot;center&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/bastion-rs/blog/master/images/tide-hello-world.png&quot; alt=&quot;Tide hello world!&quot; class=&quot;center&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Ok we now have a Tide web server up and running, but we’re not doing too much for now. Let’s try to build an application that will do some heavy computing behind the scenes.&lt;/p&gt;
 
@@ -85,7 +85,7 @@ For the purpose of this example, we will create an amazing service for deliverin
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;First of all, we want to extract some data from the route we create. We can leverage the power of Tide and get named parameters by specifying a route and a handler function:&lt;/p&gt;
-&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        &lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/prime/:digits&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prime_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/prime/:digits&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prime_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;The Tide router will extract &lt;code class=&quot;highlighter-rouge&quot;&gt;d&lt;/code&gt; as a parameter, which will be queryable in our &lt;code class=&quot;highlighter-rouge&quot;&gt;prime_number&lt;/code&gt; function:&lt;/p&gt;
@@ -103,7 +103,7 @@ you asked me to compute a prime number that has 10 digits.
 
 &lt;p&gt;Let’s now do some heavy computation!&lt;/p&gt;
 
-&lt;p&gt;Well maybe not… We’re going to create a couple of functions that will allow us to compute a prime number with the correct width. 
+&lt;p&gt;Well maybe not… We’re going to create a couple of functions that will allow us to compute a prime number with the correct width.
 Long story short we will iterate over numbers with the correct number of digits starting from a random one, and use &lt;a href=&quot;https://en.wikipedia.org/wiki/Primality_test#Pseudocode&quot;&gt;a test to find out if the random number is a prime number&lt;/a&gt;. It will look like this:&lt;/p&gt;
 
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_prime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num_digits&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;usize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;u128&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -111,7 +111,7 @@ Long story short we will iterate over numbers with the correct number of digits 
     &lt;span class=&quot;c&quot;&gt;// with num_digits = 4, max_bound == 10000&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;max_bound&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_max_bound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num_digits&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
     &lt;span class=&quot;c&quot;&gt;// maybe_prime is a number in range [1000, 10000)&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// the closing parenthesiss means it won't reach the number.&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// the closing parentheses means it won't reach the number.&lt;/span&gt;
     &lt;span class=&quot;c&quot;&gt;// the maximum allowed value for maybe_prime is 9999.&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Rng&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maybe_prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;thread_rng&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.gen_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min_bound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;max_bound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
@@ -231,13 +231,13 @@ It was computed &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;237 seconds.
 
 &lt;h3 id=&quot;add-a-little-twist&quot;&gt;Add a little twist&lt;/h3&gt;
 
-&lt;p&gt;The more complex a system becomes, the more likely it is to fail. In order to introduce Bastion and a couple of its basic features, we will introduce a failure mode that will happen randomly in our example, and see how bastion can help us reason about failures and complex systems. But first, a disclaimer.&lt;/p&gt;
+&lt;p&gt;The more complex a system becomes, the more likely it is to fail. In order to introduce Bastion and a couple of its basic features, we will introduce a failure mode that will happen randomly in our example, and see how Bastion can help us reason about failures and complex systems. But first, a disclaimer.&lt;/p&gt;
 
 &lt;h3 id=&quot;disclaimer&quot;&gt;Disclaimer&lt;/h3&gt;
 
 &lt;p&gt;THIS EXAMPLE COMES AS IS… Yeah no that’s not what I meant by a disclaimer.&lt;/p&gt;
 
-&lt;p&gt;async-rs and the async-std library allow you to achieve a lot, and by a lot I really mean A LOT. The twist I’m about to introduce (leading to a panic) is _not _ idiomatic at all, and you’re much better off leveraging Result, Option and other awesome Rust structures that were built to do this. The purpose of this example is not to make you think Bastion can solve this problem and async-rs cannot. async-rs can totally handle failures (and generating prime numbers for that matter) in a graceful way.&lt;/p&gt;
+&lt;p&gt;async-rs and the async-std library allow you to achieve a lot, and by a lot I really mean A LOT. The twist I’m about to introduce (leading to a panic) is &lt;code class=&quot;highlighter-rouge&quot;&gt;not&lt;/code&gt; idiomatic at all, and you’re much better off leveraging Result, Option and other awesome Rust structures that were built to do this. The purpose of this example is not to make you think Bastion can solve this problem and async-rs cannot. async-rs can totally handle failures (and generating prime numbers for that matter) in a graceful way.&lt;/p&gt;
 
 &lt;p&gt;I would also like to let you know that the async-rs team has been doing an amazing job, and that they are an amazing team, always friendly, super helpful, and they helped me a lot while I was preparing the examples and this blog post.&lt;/p&gt;
 
@@ -245,10 +245,10 @@ It was computed &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;237 seconds.
 
 &lt;p&gt;As &lt;a href=&quot;https://en.wikipedia.org/wiki/John_Gall_(author)#Gall's_law&quot;&gt;John Gall &lt;/a&gt; states it:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;A complex system that works is invariably found 
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;A complex system that works is invariably found
 to have evolved from a simple system that worked.
-A complex system designed from scratch never works 
-and cannot be patched up to make it work. 
+A complex system designed from scratch never works
+and cannot be patched up to make it work.
 You have to start over with a working simple system.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -283,7 +283,7 @@ You have to start over with a working simple system.
 
 &lt;p&gt;Let’s take our example for a cargo run and watch it fail after a couple of calls:&lt;/p&gt;
 
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cargo run 
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cargo run
     Finished dev &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;unoptimized + debuginfo] target&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;0.08s
      Running &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;target/debug/bastion_with_tide&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
 thread &lt;span class=&quot;s1&quot;&gt;'async-std/executor'&lt;/span&gt; panicked at &lt;span class=&quot;s1&quot;&gt;'I was about to return 2940675629 but I chose to panic instead!'&lt;/span&gt;, src/
@@ -313,13 +313,13 @@ curl: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7&lt;span class=&quot;o&quot
 
 &lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
 
-&lt;p&gt;As said in the disclaimer, there are several ways to recover from this, and in part two of this series, we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a bastion on Tide!&lt;/p&gt;
+&lt;p&gt;As said in the disclaimer, there are several ways to recover from this, and in part two of this series, we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a Bastion on Tide!&lt;/p&gt;
 
 &lt;p&gt;I hope you enjoyed reading this blog post as much as I enjoyed writing it, and I can’t wait to share part two with you!&lt;/p&gt;
 
 &lt;p&gt;The complete example file is available &lt;a href=&quot;https://gist.github.com/o0Ignition0o/22c86b382166ba6ce1669a9e4dd37062&quot;&gt;in this Github gist&lt;/a&gt; and you can reach out to me anytime if you have a question.&lt;/p&gt;
 
-&lt;p&gt;I you have any questions or would like to have a chat with us, don’t hesitate to reach out to the bastion team on &lt;a href=&quot;https://github.com/bastion-rs&quot;&gt;Github&lt;/a&gt;, &lt;a href=&quot;https://twitter.com/bastion_rs&quot;&gt;Twitter&lt;/a&gt;, and &lt;a href=&quot;https://discord.gg/HvdUXX&quot;&gt;Discord&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;I you have any questions or would like to have a chat with us, don’t hesitate to reach out to the Bastion team on &lt;a href=&quot;https://github.com/bastion-rs&quot;&gt;Github&lt;/a&gt;, &lt;a href=&quot;https://twitter.com/bastion_rs&quot;&gt;Twitter&lt;/a&gt;, and &lt;a href=&quot;https://discord.gg/HvdUXX&quot;&gt;Discord&lt;/a&gt;!&lt;/p&gt;
 </description>
         <pubDate>Sun, 23 Feb 2020 00:00:00 +0100</pubDate>
         <link>http://localhost:4000/2020/02/23/bastion-floating-on-tide-part-1.html</link>
