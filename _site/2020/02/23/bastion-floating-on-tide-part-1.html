@@ -128,7 +128,7 @@
 
 <p>Now let’s open a browser and go to <a href="http://127.0.0.1:8080">http://127.0.0.1:8080</a></p>
 
-<p><img src="/images/posts/bastion-floating-on-tide/tide-hello-world.png" alt="Tide hello world!" class="center" /></p>
+<p><img src="https://raw.githubusercontent.com/bastion-rs/blog/master/images/tide-hello-world.png" alt="Tide hello world!" class="center" /></p>
 
 <p>Ok we now have a Tide web server up and running, but we’re not doing too much for now. Let’s try to build an application that will do some heavy computing behind the scenes.</p>
 
@@ -151,7 +151,7 @@ For the purpose of this example, we will create an amazing service for deliverin
 </code></pre></div></div>
 
 <p>First of all, we want to extract some data from the route we create. We can leverage the power of Tide and get named parameters by specifying a route and a handler function:</p>
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="n">app</span><span class="nf">.at</span><span class="p">(</span><span class="s">"/prime/:digits"</span><span class="p">)</span><span class="nf">.get</span><span class="p">(</span><span class="n">prime_number</span><span class="p">);</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">app</span><span class="nf">.at</span><span class="p">(</span><span class="s">"/prime/:digits"</span><span class="p">)</span><span class="nf">.get</span><span class="p">(</span><span class="n">prime_number</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>The Tide router will extract <code class="highlighter-rouge">d</code> as a parameter, which will be queryable in our <code class="highlighter-rouge">prime_number</code> function:</p>
@@ -169,7 +169,7 @@ you asked me to compute a prime number that has 10 digits.
 
 <p>Let’s now do some heavy computation!</p>
 
-<p>Well maybe not… We’re going to create a couple of functions that will allow us to compute a prime number with the correct width. 
+<p>Well maybe not… We’re going to create a couple of functions that will allow us to compute a prime number with the correct width.
 Long story short we will iterate over numbers with the correct number of digits starting from a random one, and use <a href="https://en.wikipedia.org/wiki/Primality_test#Pseudocode">a test to find out if the random number is a prime number</a>. It will look like this:</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">get_prime</span><span class="p">(</span><span class="n">num_digits</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">u128</span> <span class="p">{</span>
@@ -177,7 +177,7 @@ Long story short we will iterate over numbers with the correct number of digits 
     <span class="c">// with num_digits = 4, max_bound == 10000</span>
     <span class="k">let</span> <span class="n">max_bound</span> <span class="o">=</span> <span class="nf">get_max_bound</span><span class="p">(</span><span class="n">num_digits</span><span class="p">);</span>
     <span class="c">// maybe_prime is a number in range [1000, 10000)</span>
-    <span class="c">// the closing parenthesiss means it won't reach the number.</span>
+    <span class="c">// the closing parentheses means it won't reach the number.</span>
     <span class="c">// the maximum allowed value for maybe_prime is 9999.</span>
     <span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="n">Rng</span><span class="p">;</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">maybe_prime</span> <span class="o">=</span> <span class="nn">rand</span><span class="p">::</span><span class="nf">thread_rng</span><span class="p">()</span><span class="nf">.gen_range</span><span class="p">(</span><span class="n">min_bound</span><span class="p">,</span> <span class="n">max_bound</span><span class="p">);</span>
@@ -297,13 +297,13 @@ It was computed <span class="k">in </span>237 seconds.
 
 <h3 id="add-a-little-twist">Add a little twist</h3>
 
-<p>The more complex a system becomes, the more likely it is to fail. In order to introduce Bastion and a couple of its basic features, we will introduce a failure mode that will happen randomly in our example, and see how bastion can help us reason about failures and complex systems. But first, a disclaimer.</p>
+<p>The more complex a system becomes, the more likely it is to fail. In order to introduce Bastion and a couple of its basic features, we will introduce a failure mode that will happen randomly in our example, and see how Bastion can help us reason about failures and complex systems. But first, a disclaimer.</p>
 
 <h3 id="disclaimer">Disclaimer</h3>
 
 <p>THIS EXAMPLE COMES AS IS… Yeah no that’s not what I meant by a disclaimer.</p>
 
-<p>async-rs and the async-std library allow you to achieve a lot, and by a lot I really mean A LOT. The twist I’m about to introduce (leading to a panic) is _not _ idiomatic at all, and you’re much better off leveraging Result, Option and other awesome Rust structures that were built to do this. The purpose of this example is not to make you think Bastion can solve this problem and async-rs cannot. async-rs can totally handle failures (and generating prime numbers for that matter) in a graceful way.</p>
+<p>async-rs and the async-std library allow you to achieve a lot, and by a lot I really mean A LOT. The twist I’m about to introduce (leading to a panic) is <code class="highlighter-rouge">not</code> idiomatic at all, and you’re much better off leveraging Result, Option and other awesome Rust structures that were built to do this. The purpose of this example is not to make you think Bastion can solve this problem and async-rs cannot. async-rs can totally handle failures (and generating prime numbers for that matter) in a graceful way.</p>
 
 <p>I would also like to let you know that the async-rs team has been doing an amazing job, and that they are an amazing team, always friendly, super helpful, and they helped me a lot while I was preparing the examples and this blog post.</p>
 
@@ -311,10 +311,10 @@ It was computed <span class="k">in </span>237 seconds.
 
 <p>As <a href="https://en.wikipedia.org/wiki/John_Gall_(author)#Gall's_law">John Gall </a> states it:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A complex system that works is invariably found 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A complex system that works is invariably found
 to have evolved from a simple system that worked.
-A complex system designed from scratch never works 
-and cannot be patched up to make it work. 
+A complex system designed from scratch never works
+and cannot be patched up to make it work.
 You have to start over with a working simple system.
 </code></pre></div></div>
 
@@ -349,7 +349,7 @@ You have to start over with a working simple system.
 
 <p>Let’s take our example for a cargo run and watch it fail after a couple of calls:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>cargo run 
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>cargo run
     Finished dev <span class="o">[</span>unoptimized + debuginfo] target<span class="o">(</span>s<span class="o">)</span> <span class="k">in </span>0.08s
      Running <span class="sb">`</span>target/debug/bastion_with_tide<span class="sb">`</span>
 thread <span class="s1">'async-std/executor'</span> panicked at <span class="s1">'I was about to return 2940675629 but I chose to panic instead!'</span>, src/
@@ -379,13 +379,13 @@ curl: <span class="o">(</span>7<span class="o">)</span> Failed to connect to 127
 
 <h3 id="conclusion">Conclusion</h3>
 
-<p>As said in the disclaimer, there are several ways to recover from this, and in part two of this series, we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a bastion on Tide!</p>
+<p>As said in the disclaimer, there are several ways to recover from this, and in part two of this series, we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a Bastion on Tide!</p>
 
 <p>I hope you enjoyed reading this blog post as much as I enjoyed writing it, and I can’t wait to share part two with you!</p>
 
 <p>The complete example file is available <a href="https://gist.github.com/o0Ignition0o/22c86b382166ba6ce1669a9e4dd37062">in this Github gist</a> and you can reach out to me anytime if you have a question.</p>
 
-<p>I you have any questions or would like to have a chat with us, don’t hesitate to reach out to the bastion team on <a href="https://github.com/bastion-rs">Github</a>, <a href="https://twitter.com/bastion_rs">Twitter</a>, and <a href="https://discord.gg/HvdUXX">Discord</a>!</p>
+<p>I you have any questions or would like to have a chat with us, don’t hesitate to reach out to the Bastion team on <a href="https://github.com/bastion-rs">Github</a>, <a href="https://twitter.com/bastion_rs">Twitter</a>, and <a href="https://discord.gg/HvdUXX">Discord</a>!</p>
 
   </article>
 

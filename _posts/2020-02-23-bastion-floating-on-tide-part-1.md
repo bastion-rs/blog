@@ -56,7 +56,7 @@ cargo run
 
 Now let’s open a browser and go to [http://127.0.0.1:8080](http://127.0.0.1:8080)
 
-![Tide hello world!](/images/posts/bastion-floating-on-tide/tide-hello-world.png){: .center }
+![Tide hello world!](https://raw.githubusercontent.com/bastion-rs/blog/master/images/tide-hello-world.png){: .center }
 
 Ok we now have a Tide web server up and running, but we’re not doing too much for now. Let’s try to build an application that will do some heavy computing behind the scenes.
 
@@ -65,7 +65,7 @@ Ok we now have a Tide web server up and running, but we’re not doing too much 
 <s>For the purpose of this example, we will create a fibonacci adder.</s>
 
 Florian skade Gilcher suggested an amazing example, that some of you might have read about already.
-For the purpose of this example, we will create an amazing service for delivering prime numbers to the internet! 
+For the purpose of this example, we will create an amazing service for delivering prime numbers to the internet!
 
 If this exercise doesn't ring a bell, don't worry, I didn't know about it either, and I had an amazing journey discovering "Programming Erlang", written by [Joe Armstrong](https://en.wikipedia.org/wiki/Joe_Armstrong_(programmer)).
 
@@ -81,7 +81,7 @@ GET: /prime/:digits => return prime_number(digits)
 
 First of all, we want to extract some data from the route we create. We can leverage the power of Tide and get named parameters by specifying a route and a handler function:
 ```rust
-        app.at("/prime/:digits").get(prime_number);
+app.at("/prime/:digits").get(prime_number);
 ```
 
 The Tide router will extract `d` as a parameter, which will be queryable in our `prime_number` function:
@@ -101,7 +101,7 @@ you asked me to compute a prime number that has 10 digits.
 
 Let’s now do some heavy computation!
 
-Well maybe not… We're going to create a couple of functions that will allow us to compute a prime number with the correct width. 
+Well maybe not… We're going to create a couple of functions that will allow us to compute a prime number with the correct width.
 Long story short we will iterate over numbers with the correct number of digits starting from a random one, and use [a test to find out if the random number is a prime number](https://en.wikipedia.org/wiki/Primality_test#Pseudocode). It will look like this:
 
 ```rust
@@ -253,10 +253,10 @@ When it comes to chosing a runtime, I encourage you to first define your goals a
 As [John Gall ](https://en.wikipedia.org/wiki/John_Gall_(author)#Gall's_law) states it:
 
 ```
-A complex system that works is invariably found 
+A complex system that works is invariably found
 to have evolved from a simple system that worked.
-A complex system designed from scratch never works 
-and cannot be patched up to make it work. 
+A complex system designed from scratch never works
+and cannot be patched up to make it work.
 You have to start over with a working simple system.
 ```
 
@@ -294,7 +294,7 @@ loop {
 Let's take our example for a cargo run and watch it fail after a couple of calls:
 
 ```bash
-$ cargo run 
+$ cargo run
     Finished dev [unoptimized + debuginfo] target(s) in 0.08s
      Running `target/debug/bastion_with_tide`
 thread 'async-std/executor' panicked at 'I was about to return 2940675629 but I chose to panic instead!', src/
