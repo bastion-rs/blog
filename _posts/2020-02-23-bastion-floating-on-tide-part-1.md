@@ -8,7 +8,7 @@ author: Written by Jeremy o0Ignition0o Lempereur
 
 ### Introduction
 
-This post is Part one of a series on how to build a higly fault tolerant system using bastion-rs, and expose an async web api with Tide.
+This post is Part one of a series on how to build a highly fault tolerant system using bastion-rs, and expose an async web api with Tide.
 
 - Part one is about setting up a simple Tide server, and covers initial steps such as adding dependencies, some basic routing and the request/reply model.
 
@@ -248,7 +248,7 @@ async-rs and the async-std library allow you to achieve a lot, and by a lot I re
 
 I would also like to let you know that the async-rs team has been doing an amazing job, and that they are an amazing team, always friendly, super helpful, and they helped me a lot while I was preparing the examples and this blog post.
 
-When it comes to chosing a runtime, I encourage you to first define your goals and what matters the most, and then pick the best tool for the job. Sometimes an actor based framework is not necessary because your system will never reach a high level of complexity. Sometimes you should rather start with a very simple web server, and let the tools evolve as your system grows.
+When it comes to choosing a runtime, I encourage you to first define your goals and what matters the most, and then pick the best tool for the job. Sometimes an actor based framework is not necessary because your system will never reach a high level of complexity. Sometimes you should rather start with a very simple web server, and let the tools evolve as your system grows.
 
 As [John Gall ](https://en.wikipedia.org/wiki/John_Gall_(author)#Gall's_law) states it:
 
@@ -321,7 +321,7 @@ $ curl "http://127.0.0.1:8080/prime/10"
 curl: (7) Failed to connect to 127.0.0.1 port 8080: Connection refused
 ```
 
-A couple of prime numbers were generated, then the server sent an emply reply. What's even more unfortunate is that once an empty reply was returned, further connections are simply refused. In hindsight it makes sense. Because the panic caused the server to crash. It can't serve requests anymore.
+A couple of prime numbers were generated, then the server sent an empty reply. What's even more unfortunate is that once an empty reply was returned, further connections are simply refused. In hindsight it makes sense. Because the panic caused the server to crash. It can't serve requests anymore.
 
 ### Conclusion
 
