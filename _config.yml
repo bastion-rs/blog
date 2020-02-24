@@ -3,7 +3,7 @@ title: Bastion-rs blog
 description: >
   Welcome to the official bastion-rs blog!
 baseurl: ""
-url: "https://bastion-rs"
+url: "https://blog.bastion.rs"
 logo: "https://raw.githubusercontent.com/bastion-rs/bastion-rs.github.io/master/src/assets/images/bastion-logo.png"
 twitter_username: bastion_rs
 github_username: bastion-rs
