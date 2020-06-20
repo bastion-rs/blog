@@ -6,8 +6,8 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sun, 23 Feb 2020 21:35:28 +0100</pubDate>
-    <lastBuildDate>Sun, 23 Feb 2020 21:35:28 +0100</lastBuildDate>
+    <pubDate>Sat, 20 Jun 2020 14:02:07 +0200</pubDate>
+    <lastBuildDate>Sat, 20 Jun 2020 14:02:07 +0200</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -16,7 +16,7 @@
 
 &lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
 
-&lt;p&gt;This post is Part one of a series on how to build a higly fault tolerant system using bastion-rs, and expose an async web api with Tide.&lt;/p&gt;
+&lt;p&gt;This post is Part one of a series on how to build a highly fault tolerant system using bastion-rs, and expose an async web api with Tide.&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Part one is about setting up a simple Tide server, and covers initial steps such as adding dependencies, some basic routing and the request/reply model.&lt;/li&gt;
@@ -241,7 +241,7 @@ It was computed &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;237 seconds.
 
 &lt;p&gt;I would also like to let you know that the async-rs team has been doing an amazing job, and that they are an amazing team, always friendly, super helpful, and they helped me a lot while I was preparing the examples and this blog post.&lt;/p&gt;
 
-&lt;p&gt;When it comes to chosing a runtime, I encourage you to first define your goals and what matters the most, and then pick the best tool for the job. Sometimes an actor based framework is not necessary because your system will never reach a high level of complexity. Sometimes you should rather start with a very simple web server, and let the tools evolve as your system grows.&lt;/p&gt;
+&lt;p&gt;When it comes to choosing a runtime, I encourage you to first define your goals and what matters the most, and then pick the best tool for the job. Sometimes an actor based framework is not necessary because your system will never reach a high level of complexity. Sometimes you should rather start with a very simple web server, and let the tools evolve as your system grows.&lt;/p&gt;
 
 &lt;p&gt;As &lt;a href=&quot;https://en.wikipedia.org/wiki/John_Gall_(author)#Gall's_law&quot;&gt;John Gall &lt;/a&gt; states it:&lt;/p&gt;
 
@@ -309,7 +309,7 @@ curl: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;52&lt;span class=&quot;o&quo
 curl: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; Failed to connect to 127.0.0.1 port 8080: Connection refused
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;A couple of prime numbers were generated, then the server sent an emply reply. What’s even more unfortunate is that once an empty reply was returned, further connections are simply refused. In hindsight it makes sense. Because the panic caused the server to crash. It can’t serve requests anymore.&lt;/p&gt;
+&lt;p&gt;A couple of prime numbers were generated, then the server sent an empty reply. What’s even more unfortunate is that once an empty reply was returned, further connections are simply refused. In hindsight it makes sense. Because the panic caused the server to crash. It can’t serve requests anymore.&lt;/p&gt;
 
 &lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
 
@@ -344,9 +344,10 @@ curl: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7&lt;span class=&quot;o&quot
 &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;showcase/bastion-aws-lambda
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;We are using &lt;code class=&quot;highlighter-rouge&quot;&gt;serverless&lt;/code&gt; utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by &lt;code class=&quot;highlighter-rouge&quot;&gt;serverless.yml&lt;/code&gt;. For installing &lt;code class=&quot;highlighter-rouge&quot;&gt;serverless&lt;/code&gt; and its dependencies for Rust environment we will do:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm i &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; serverless
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm i &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; serverless-rust
+&lt;p&gt;We are using &lt;code class=&quot;highlighter-rouge&quot;&gt;serverless&lt;/code&gt; utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by &lt;code class=&quot;highlighter-rouge&quot;&gt;serverless.yml&lt;/code&gt;. The &lt;code class=&quot;highlighter-rouge&quot;&gt;serverless invoke local&lt;/code&gt; command we will run needs to build a Docker container, so keep in mind you need to run Docker for this example to work locally.&lt;/p&gt;
+
+&lt;p&gt;In order to install &lt;code class=&quot;highlighter-rouge&quot;&gt;serverless&lt;/code&gt; and its dependencies for Rust environment we will do:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm i
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently making GET requests. Immediately returns their body strings whenever they are available. Main code for lambda is in &lt;code class=&quot;highlighter-rouge&quot;&gt;page_fetcher/src/main.rs&lt;/code&gt;. Let’s take a look at the Lambda code and walk through it:&lt;/p&gt;
@@ -528,7 +529,7 @@ curl: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7&lt;span class=&quot;o&quot
 &lt;h3 id=&quot;testing-locally&quot;&gt;Testing locally&lt;/h3&gt;
 
 &lt;p&gt;For testing locally what we need to do is:&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;serverless invoke &lt;span class=&quot;nb&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; page_fetcher &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./node_modules/.bin/serverless invoke &lt;span class=&quot;nb&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; page_fetcher &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
     &lt;span class=&quot;s1&quot;&gt;'{
       &quot;sites&quot;: [
         &quot;https://bastion.rs&quot;,

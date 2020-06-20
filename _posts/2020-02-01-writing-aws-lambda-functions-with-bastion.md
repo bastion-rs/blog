@@ -20,10 +20,11 @@ Get into the containing directory of our example lambda declaration:
 $ cd showcase/bastion-aws-lambda
 ```
 
-We are using `serverless` utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by `serverless.yml`. For installing `serverless` and its dependencies for Rust environment we will do:
+We are using `serverless` utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by `serverless.yml`. The `serverless invoke local` command we will run needs to build a Docker container, so keep in mind you need to run Docker for this example to work locally. 
+
+In order to install `serverless` and its dependencies for Rust environment we will do:
 ```bash
-$ npm i -g serverless
-$ npm i -D serverless-rust
+$ npm i
 ```
 
 Now we have installed both dependencies for compiling and configuring our lambda. Our lambda is taking a list of sites as input and concurrently making GET requests. Immediately returns their body strings whenever they are available. Main code for lambda is in `page_fetcher/src/main.rs`. Let's take a look at the Lambda code and walk through it:
@@ -216,7 +217,7 @@ That's all we have inside the code. For more information take a look at to our *
 
 For testing locally what we need to do is:
 ```bash
-$ serverless invoke local -f page_fetcher -d \
+$ ./node_modules/.bin/serverless invoke local -f page_fetcher -d \
     '{
       "sites": [
         "https://bastion.rs",
