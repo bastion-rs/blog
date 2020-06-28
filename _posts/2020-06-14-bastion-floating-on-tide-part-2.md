@@ -365,7 +365,7 @@ task::block_on(async move {
     // ...That will populate our tide state
     let mut app = tide::with_state(prime_client);
     app.at("/prime/:digits").get(prime_number);
-app.listen("127.0.0.1:8080").await
+    app.listen("127.0.0.1:8080").await
 })?;
 ```
 
