@@ -12,6 +12,8 @@ This post is Part one of a series on how to build a highly fault tolerant system
 
 - Part one is about setting up a simple Tide server, and covers initial steps such as adding dependencies, some basic routing and the request/reply model.
 
+- In [Part two](/2020/06/14/bastion-floating-on-tide-part-2.html) we will do a bit of refactoring, and then transform our function into a bastion child.
+
 The complete example file is available [in this Github gist](https://gist.github.com/o0Ignition0o/22c86b382166ba6ce1669a9e4dd37062) and you can reach out to me anytime if you have a question.
 
 ### Creating a simple Tide project
@@ -325,7 +327,7 @@ A couple of prime numbers were generated, then the server sent an empty reply. W
 
 ### Conclusion
 
-As said in the disclaimer, there are several ways to recover from this, and in part two of this series, we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a Bastion on Tide!
+As said in the disclaimer, there are several ways to recover from this, and in [part two](/2020/06/14/bastion-floating-on-tide-part-2.html), we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a Bastion on Tide!
 
 I hope you enjoyed reading this blog post as much as I enjoyed writing it, and I can't wait to share part two with you!
 

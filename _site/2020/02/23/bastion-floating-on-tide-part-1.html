@@ -85,7 +85,12 @@
 <p>This post is Part one of a series on how to build a highly fault tolerant system using bastion-rs, and expose an async web api with Tide.</p>
 
 <ul>
-  <li>Part one is about setting up a simple Tide server, and covers initial steps such as adding dependencies, some basic routing and the request/reply model.</li>
+  <li>
+    <p>Part one is about setting up a simple Tide server, and covers initial steps such as adding dependencies, some basic routing and the request/reply model.</p>
+  </li>
+  <li>
+    <p>In <a href="/2020/06/14/bastion-floating-on-tide-part-2.html">Part two</a> we will do a bit of refactoring, and then transform our function into a bastion child.</p>
+  </li>
 </ul>
 
 <p>The complete example file is available <a href="https://gist.github.com/o0Ignition0o/22c86b382166ba6ce1669a9e4dd37062">in this Github gist</a> and you can reach out to me anytime if you have a question.</p>
@@ -379,7 +384,7 @@ curl: <span class="o">(</span>7<span class="o">)</span> Failed to connect to 127
 
 <h3 id="conclusion">Conclusion</h3>
 
-<p>As said in the disclaimer, there are several ways to recover from this, and in part two of this series, we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a Bastion on Tide!</p>
+<p>As said in the disclaimer, there are several ways to recover from this, and in <a href="/2020/06/14/bastion-floating-on-tide-part-2.html">part two</a>, we will explore one way to escape this prime numbers russian roulette. We will add fault tolerance, and dive a bit into the actor model by building a Bastion on Tide!</p>
 
 <p>I hope you enjoyed reading this blog post as much as I enjoyed writing it, and I can’t wait to share part two with you!</p>
 
