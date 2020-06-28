@@ -260,7 +260,7 @@ $ cargo run
 $ # nothing happened
 ```
 
-Wait what? How comes nothing happened? Hmmm it turns out something happened, but we didn't catch it! We just sent a request, and we didn't await a reply. let's do it now
+Wait what? How comes nothing happened? Hmmm it turns out something happened, but we didn't catch it! We just sent a request, and we didn't await a reply. let's do it now.
 
 ### Writing our request/reply function
 
