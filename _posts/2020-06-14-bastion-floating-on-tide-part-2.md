@@ -69,7 +69,7 @@ If you have any question or just wanna hang out with us, please [join our discor
 
 We are now going to wrap our prime number generator in a bastion child, that will receive requests for Prime numbers, and reply with the generated prime number, and a couple of informations as well.
 
-We will first define a Response struct that will allow prime_number::get() to give us the prime number we asked for, as well as how long it took it to find it.
+We will first define a Response struct that will allow `prime_number::get()` to give us the prime number we asked for, as well as how long it took it to find it.
 An impl Display for Response will allow us to simplify the tide request handler even further:
 
 ```rust
@@ -164,7 +164,7 @@ Now there's a lot of information here, so let's walk trough it together:
 
 #### BastionContext
 
-A child processor is an async function that takes a `BastionContext` as a parameter, and returns a Result<(),()>. In our case it will hopefully never return, because we are running it in a `loop{}`.
+A child processor is an async function that takes a `BastionContext` as a parameter, and returns a `Result<(),()>`. In our case it will hopefully never return, because we are running it in a `loop{}`.
 
 Refer to the [BastionContext documentation](https://docs.rs/bastion/0.3.5-alpha/bastion/context/struct.BastionContext.html) if you would like to dig deeper.
 
@@ -175,7 +175,7 @@ The `msg!` macro is where most of the magic is happening. We are not using all o
 
 Refer to the [msg! documentation](https://docs.rs/bastion/0.3.5-alpha/bastion/macro.msg.html#example) if you would like to dig deeper.
 
-It used to be one of my biggest struggles as I started using Bastion, so we are trying to find ways to express this behavior withoug macros. If you have ideas you would like to share, please let me know in the [corresponding issue](https://github.com/bastion-rs/bastion/issues/214).
+It used to be one of my biggest struggles as I started using Bastion, so we are trying to find ways to express this behavior without macros. If you have ideas you would like to share, please let me know in the [corresponding issue](https://github.com/bastion-rs/bastion/issues/214).
 
 
 #### answer!
@@ -200,10 +200,9 @@ Now that we have our runner, let's spawn a child!
 
 ### Step three, create a child
 
-Let's now head bback to our main function, and build our bastion:
+Let's now head back to our main function, and build our bastion:
 
 ```rust
-
 fn main() {
 
     // We need a bastion in order to run everything
@@ -228,13 +227,13 @@ fn main() {
 ```
 
 A bastion needs to be initialized and started before it can do anything.
-stop() and block_until_stopped() allow the bastion to gracefully shut down.
+`stop()` and `block_until_stopped()` allow the bastion to gracefully shut down.
 
 The [bastion struct documentation](https://docs.rs/bastion/0.3.5-alpha/bastion/struct.Bastion.html) is very exhaustive and will allow you to dig deeper.
 
-Bastion::children allows us to set up redundancy (1 for now), and the message processing function (`serve_prime_numbers` in our case)
+`Bastion::children` allows us to set up redundancy (1 for now), and the message processing function (`serve_prime_numbers` in our case)
 
-We can then pick our first (and only) whild and `ask_anonymously` for a prime number.
+We can then pick our first (and only) child and `ask_anonymously` for a prime number.
 
 Time for our last explanation before we can tie bastion and tide (this one sounds funny doesn't it?).
 
@@ -261,7 +260,7 @@ $ cargo run
 $ # nothing happened
 ```
 
-Wait what? how comes nothing happened? Hmmm it turns out something happened, but we didn't catch it! We just sent a request, and we didn't await a reply. let's do it now
+Wait what? How comes nothing happened? Hmmm it turns out something happened, but we didn't catch it! We just sent a request, and we didn't await a reply. let's do it now
 
 ### Writing our request/reply function
 
@@ -270,7 +269,7 @@ Our request/reply function will:
 - wait for a reply
 - return the reply
 
-In order to to this, we need to have a handle to our bastion children, so we can `ask_anonymously` for prime numbers. Let's write this structure:
+In order to do this, we need to have a handle to our bastion children, so we can `ask_anonymously` for prime numbers. Let's write this structure:
 
 ```rust
 // Our PrimeClient will keep a children_handle
@@ -356,7 +355,7 @@ Yay \o/ it works, it's now time to plug it to our tide server!
 
 As an aside, I _really_ want to let you know how amazing [tide's documentation](https://docs.rs/tide/0.11.0/tide/) is. It was a pleasure to briefly skim the doc, and find exactly what it was looking for, with super nice examples, and no bloat around it. Kudos to the team, you're doing an amazing job!
 
-Tide has two ways to create an app, [new()](https://docs.rs/tide/0.11.0/tide/fn.new.html) and [with_state()](https://docs.rs/tide/0.11.0/tide/fn.with_state.html). We are now going to change our new() to a with_state() call so we can pass our prime_client to the tide app:
+Tide has two ways to create an app, [`new()`](https://docs.rs/tide/0.11.0/tide/fn.new.html) and [`with_state()`](https://docs.rs/tide/0.11.0/tide/fn.with_state.html). We are now going to change our `new()` to a `with_state()` call so we can pass our prime_client to the tide app:
 
 ```rust
 // Create a prime client...
@@ -431,5 +430,5 @@ Again, I hope you enjoyed reading this post as much as I enjoyed writing it, and
 
 The complete example file is available [in this Github gist](https://gist.github.com/o0Ignition0o/3b5dd124d9cfb6b3189e942548db79ad) and you can reach out to me anytime if you have a question.
 
-I you have any questions or would like to have a chat with us, don't hesitate to reach out to the Bastion team on [Github](https://github.com/bastion-rs), [Twitter](https://twitter.com/bastion_rs), and [Discord](https://discord.gg/HvdUXX)!
+If you have any questions or would like to have a chat with us, don't hesitate to reach out to the Bastion team on [Github](https://github.com/bastion-rs), [Twitter](https://twitter.com/bastion_rs), and [Discord](https://discord.gg/HvdUXX)!
 
