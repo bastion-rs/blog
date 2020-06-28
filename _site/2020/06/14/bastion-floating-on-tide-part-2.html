@@ -146,7 +146,7 @@ As you can see, we just wrapped all of the logic <a href="https://gist.github.co
 
 <p>We are now going to wrap our prime number generator in a bastion child, that will receive requests for Prime numbers, and reply with the generated prime number, and a couple of informations as well.</p>
 
-<p>We will first define a Response struct that will allow prime_number::get() to give us the prime number we asked for, as well as how long it took it to find it.
+<p>We will first define a Response struct that will allow <code class="highlighter-rouge">prime_number::get()</code> to give us the prime number we asked for, as well as how long it took it to find it.
 An impl Display for Response will allow us to simplify the tide request handler even further:</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">mod</span> <span class="n">prime_number</span> <span class="p">{</span>
@@ -238,7 +238,7 @@ An impl Display for Response will allow us to simplify the tide request handler 
 
 <h4 id="bastioncontext">BastionContext</h4>
 
-<p>A child processor is an async function that takes a <code class="highlighter-rouge">BastionContext</code> as a parameter, and returns a Result&lt;(),()&gt;. In our case it will hopefully never return, because we are running it in a <code class="highlighter-rouge">loop{}</code>.</p>
+<p>A child processor is an async function that takes a <code class="highlighter-rouge">BastionContext</code> as a parameter, and returns a <code class="highlighter-rouge">Result&lt;(),()&gt;</code>. In our case it will hopefully never return, because we are running it in a <code class="highlighter-rouge">loop{}</code>.</p>
 
 <p>Refer to the <a href="https://docs.rs/bastion/0.3.5-alpha/bastion/context/struct.BastionContext.html">BastionContext documentation</a> if you would like to dig deeper.</p>
 
@@ -248,7 +248,7 @@ An impl Display for Response will allow us to simplify the tide request handler 
 
 <p>Refer to the <a href="https://docs.rs/bastion/0.3.5-alpha/bastion/macro.msg.html#example">msg! documentation</a> if you would like to dig deeper.</p>
 
-<p>It used to be one of my biggest struggles as I started using Bastion, so we are trying to find ways to express this behavior withoug macros. If you have ideas you would like to share, please let me know in the <a href="https://github.com/bastion-rs/bastion/issues/214">corresponding issue</a>.</p>
+<p>It used to be one of my biggest struggles as I started using Bastion, so we are trying to find ways to express this behavior without macros. If you have ideas you would like to share, please let me know in the <a href="https://github.com/bastion-rs/bastion/issues/214">corresponding issue</a>.</p>
 
 <h4 id="answer">answer!</h4>
 
@@ -272,10 +272,9 @@ An impl Display for Response will allow us to simplify the tide request handler 
 
 <h3 id="step-three-create-a-child">Step three, create a child</h3>
 
-<p>Let’s now head bback to our main function, and build our bastion:</p>
+<p>Let’s now head back to our main function, and build our bastion:</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 
     <span class="c">// We need a bastion in order to run everything</span>
     <span class="nn">Bastion</span><span class="p">::</span><span class="nf">init</span><span class="p">();</span>
@@ -299,13 +298,13 @@ An impl Display for Response will allow us to simplify the tide request handler 
 </code></pre></div></div>
 
 <p>A bastion needs to be initialized and started before it can do anything.
-stop() and block_until_stopped() allow the bastion to gracefully shut down.</p>
+<code class="highlighter-rouge">stop()</code> and <code class="highlighter-rouge">block_until_stopped()</code> allow the bastion to gracefully shut down.</p>
 
 <p>The <a href="https://docs.rs/bastion/0.3.5-alpha/bastion/struct.Bastion.html">bastion struct documentation</a> is very exhaustive and will allow you to dig deeper.</p>
 
-<p>Bastion::children allows us to set up redundancy (1 for now), and the message processing function (<code class="highlighter-rouge">serve_prime_numbers</code> in our case)</p>
+<p><code class="highlighter-rouge">Bastion::children</code> allows us to set up redundancy (1 for now), and the message processing function (<code class="highlighter-rouge">serve_prime_numbers</code> in our case)</p>
 
-<p>We can then pick our first (and only) whild and <code class="highlighter-rouge">ask_anonymously</code> for a prime number.</p>
+<p>We can then pick our first (and only) child and <code class="highlighter-rouge">ask_anonymously</code> for a prime number.</p>
 
 <p>Time for our last explanation before we can tie bastion and tide (this one sounds funny doesn’t it?).</p>
 
@@ -331,7 +330,7 @@ stop() and block_until_stopped() allow the bastion to gracefully shut down.</p>
 <span class="nv">$ </span><span class="c"># nothing happened</span>
 </code></pre></div></div>
 
-<p>Wait what? how comes nothing happened? Hmmm it turns out something happened, but we didn’t catch it! We just sent a request, and we didn’t await a reply. let’s do it now</p>
+<p>Wait what? How comes nothing happened? Hmmm it turns out something happened, but we didn’t catch it! We just sent a request, and we didn’t await a reply. let’s do it now.</p>
 
 <h3 id="writing-our-requestreply-function">Writing our request/reply function</h3>
 
@@ -342,7 +341,7 @@ stop() and block_until_stopped() allow the bastion to gracefully shut down.</p>
   <li>return the reply</li>
 </ul>
 
-<p>In order to to this, we need to have a handle to our bastion children, so we can <code class="highlighter-rouge">ask_anonymously</code> for prime numbers. Let’s write this structure:</p>
+<p>In order to do this, we need to have a handle to our bastion children, so we can <code class="highlighter-rouge">ask_anonymously</code> for prime numbers. Let’s write this structure:</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Our PrimeClient will keep a children_handle</span>
 <span class="c">// to be able to send messages to the bastion</span>
@@ -425,7 +424,7 @@ It was found <span class="k">in </span>0s and 0ms
 
 <p>As an aside, I <em>really</em> want to let you know how amazing <a href="https://docs.rs/tide/0.11.0/tide/">tide’s documentation</a> is. It was a pleasure to briefly skim the doc, and find exactly what it was looking for, with super nice examples, and no bloat around it. Kudos to the team, you’re doing an amazing job!</p>
 
-<p>Tide has two ways to create an app, <a href="https://docs.rs/tide/0.11.0/tide/fn.new.html">new()</a> and <a href="https://docs.rs/tide/0.11.0/tide/fn.with_state.html">with_state()</a>. We are now going to change our new() to a with_state() call so we can pass our prime_client to the tide app:</p>
+<p>Tide has two ways to create an app, <a href="https://docs.rs/tide/0.11.0/tide/fn.new.html"><code class="highlighter-rouge">new()</code></a> and <a href="https://docs.rs/tide/0.11.0/tide/fn.with_state.html"><code class="highlighter-rouge">with_state()</code></a>. We are now going to change our <code class="highlighter-rouge">new()</code> to a <code class="highlighter-rouge">with_state()</code> call so we can pass our prime_client to the tide app:</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Create a prime client...</span>
 <span class="k">let</span> <span class="n">prime_client</span> <span class="o">=</span> <span class="nn">PrimeClient</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">children_handle</span><span class="p">);</span>
@@ -434,7 +433,7 @@ It was found <span class="k">in </span>0s and 0ms
     <span class="c">// ...That will populate our tide state</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">app</span> <span class="o">=</span> <span class="nn">tide</span><span class="p">::</span><span class="nf">with_state</span><span class="p">(</span><span class="n">prime_client</span><span class="p">);</span>
     <span class="n">app</span><span class="nf">.at</span><span class="p">(</span><span class="s">"/prime/:digits"</span><span class="p">)</span><span class="nf">.get</span><span class="p">(</span><span class="n">prime_number</span><span class="p">);</span>
-<span class="n">app</span><span class="nf">.listen</span><span class="p">(</span><span class="s">"127.0.0.1:8080"</span><span class="p">)</span><span class="py">.await</span>
+    <span class="n">app</span><span class="nf">.listen</span><span class="p">(</span><span class="s">"127.0.0.1:8080"</span><span class="p">)</span><span class="py">.await</span>
 <span class="p">})</span><span class="o">?</span><span class="p">;</span>
 </code></pre></div></div>
 
@@ -496,7 +495,7 @@ It was found <span class="k">in </span>0s and 427ms
 
 <p>The complete example file is available <a href="https://gist.github.com/o0Ignition0o/3b5dd124d9cfb6b3189e942548db79ad">in this Github gist</a> and you can reach out to me anytime if you have a question.</p>
 
-<p>I you have any questions or would like to have a chat with us, don’t hesitate to reach out to the Bastion team on <a href="https://github.com/bastion-rs">Github</a>, <a href="https://twitter.com/bastion_rs">Twitter</a>, and <a href="https://discord.gg/HvdUXX">Discord</a>!</p>
+<p>If you have any questions or would like to have a chat with us, don’t hesitate to reach out to the Bastion team on <a href="https://github.com/bastion-rs">Github</a>, <a href="https://twitter.com/bastion_rs">Twitter</a>, and <a href="https://discord.gg/HvdUXX">Discord</a>!</p>
 
 
   </article>
