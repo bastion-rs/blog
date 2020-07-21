@@ -12,3 +12,6 @@ github_username: bastion-rs
 highlighter: rouge
 
 root: "https://bastion-rs"
+
+plugins:
+  - jemoji
