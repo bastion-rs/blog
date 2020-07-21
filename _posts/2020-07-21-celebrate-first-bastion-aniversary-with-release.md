@@ -27,8 +27,8 @@ This release is coming with exciting features:
 - **Nuclei, an agnostic proactive IO system**
     - With nuclei and agnostik, IO and executors are separated.
     - You can mix and match any executor with agnostik and use the same IO system.
-    - Nuclei is based on Proactive IO.
-    - Nuclei supports io_uring and works well with completion based evented IO. Windows support is currently in the works.
+    - [Nuclei](https://github.com/vertexclique/nuclei) is based on Proactive IO.
+    - [Nuclei](https://github.com/vertexclique/nuclei) supports io_uring and works well with completion based evented IO. Windows support is currently in the works.
     - Completely async, can be independently used from Bastion.
         - It will power Bastion’s IO system and ecosystem.
 
