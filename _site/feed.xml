@@ -6,9 +6,201 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sun, 28 Jun 2020 21:34:38 +0200</pubDate>
-    <lastBuildDate>Sun, 28 Jun 2020 21:34:38 +0200</lastBuildDate>
+    <pubDate>Tue, 21 Jul 2020 16:31:07 +0200</pubDate>
+    <lastBuildDate>Tue, 21 Jul 2020 16:31:07 +0200</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>Celebrate the 1st Bastioniversary with the 0.4 release! :tada: :confetti_ball: :rocket:</title>
+        <description>&lt;h3 id=&quot;the-excitement-of-a-1st-birthday&quot;&gt;The Excitement of a 1st birthday!&lt;/h3&gt;
+
+&lt;p&gt;Exactly 1 year passed since the initial release of Bastion. In this one year we’ve done so many amazing things together as Bastion team.&lt;/p&gt;
+
+&lt;p&gt;We are proud to announce our 0.4 release on our 1st birthday! :tada: :confetti_ball: :rocket:&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-bastion&quot;&gt;What is Bastion?&lt;/h3&gt;
+
+&lt;p&gt;Bastion is a distributed runtime which is inspired from the design principles of Erlang and adapts these into Rust ecosystem.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-new&quot;&gt;What is new?&lt;/h3&gt;
+
+&lt;p&gt;This release is coming with exciting features:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Agnostik&lt;/strong&gt; executor runtime
+    &lt;ul&gt;
+      &lt;li&gt;With Agnostik, Bastion can run on any runtime. Head over to the [agnostik project](https://github.com/bastion-rs/agnostik/) for more information.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Nuclei, an agnostic proactive IO system&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;With nuclei and agnostik, IO and executors are separated.&lt;/li&gt;
+      &lt;li&gt;You can mix and match any executor with agnostik and use the same IO system.&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://github.com/vertexclique/nuclei&quot;&gt;Nuclei&lt;/a&gt; is based on Proactive IO.&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://github.com/vertexclique/nuclei&quot;&gt;Nuclei&lt;/a&gt; supports io_uring and works well with completion based evented IO. Windows support is currently in the works.&lt;/li&gt;
+      &lt;li&gt;Completely async, can be independently used from Bastion.
+        &lt;ul&gt;
+          &lt;li&gt;It will power Bastion’s IO system and ecosystem.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Autoscaling feature&lt;/strong&gt; for actors
+    &lt;ul&gt;
+      &lt;li&gt;Right now with the &lt;code class=&quot;highlighter-rouge&quot;&gt;scaling&lt;/code&gt; feature enabled, you can create actor groups in Bastion that will adapt to incoming workload according to given resizer parameters.&lt;/li&gt;
+      &lt;li&gt;Example construction is like:
+        &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;// Start with 3 actors&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;.with_redundancy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;// Do heartbeat every 5 seconds&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;.with_heartbeat_tick&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from_secs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;.with_resizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;nn&quot;&gt;OptimalSizeExploringResizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;// A minimal acceptable size of group&lt;/span&gt;
+          &lt;span class=&quot;nf&quot;&gt;.with_lower_bound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;// Max 10 actors in runtime&lt;/span&gt;
+          &lt;span class=&quot;nf&quot;&gt;.with_upper_bound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;UpperBound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Limit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;// Scale up when a half of actors have more than 3 messages&lt;/span&gt;
+          &lt;span class=&quot;nf&quot;&gt;.with_upscale_strategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;UpscaleStrategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;MailboxSizeThreshold&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;// Increase the size of group on 10%, if necessary to scale up&lt;/span&gt;
+          &lt;span class=&quot;nf&quot;&gt;.with_upscale_rate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+          &lt;span class=&quot;c&quot;&gt;// Decrease the size of group on 20%, if there are too many idle actors&lt;/span&gt;
+          &lt;span class=&quot;nf&quot;&gt;.with_downscale_rate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Cluster/distributed actors&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;After some extensive testing of the Artillery protocol, we are super thrilled to show SWIM based epidemic cluster for Bastion. 
+  (SWIM stands for Scalable Weakly-consistent Infection-style Membership, we know it’s a mouthful, read &lt;a href=&quot;https://asafdav2.github.io/2017/swim-protocol/&quot;&gt;this blog post&lt;/a&gt; if you would like an introduction).
+  Here is an &lt;a href=&quot;https://github.com/bastion-rs/showcase/tree/master/bastion-cluster&quot;&gt;example code for cluster execution&lt;/a&gt;.&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://twitter.com/vertexclique/status/1273945945126973440&quot;&gt;Here’s a live example of a ping pong cluster&lt;/a&gt;.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Named child in children groups&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Right now you can get the names of the child in children groups. This is very handy when logging for example.&lt;/li&gt;
+      &lt;li&gt;With this enabled everything is user readable content addressable in Bastion runtime.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Heartbeat&lt;/strong&gt; for children
+    &lt;ul&gt;
+      &lt;li&gt;The bastion runtime continuously watches children with heartbeat to check their status and do sampling over their internals.&lt;/li&gt;
+      &lt;li&gt;This feature doesn’t require any feature flags.&lt;/li&gt;
+      &lt;li&gt;It is shown in the scaling example seen above:
+        &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;// Do heartbeat each 5 seconds&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;.with_heartbeat_tick&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from_secs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Dispatchers&lt;/strong&gt; allow you to route specific messages to specific groups and collect messages from them.
+    &lt;ul&gt;
+      &lt;li&gt;This enables creating various fan-outs and fan-ins, and streaming data processing implementations.&lt;/li&gt;
+      &lt;li&gt;Here’s &lt;a href=&quot;https://github.com/bastion-rs/bastion/blob/master/src/bastion/examples/round_robin_dispatcher.rs#L4&quot;&gt;how to use a round robin dispatcher&lt;/a&gt;.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Dead letters mailbox&lt;/strong&gt; so undelivered messages can be processed or monitored later on.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Lockfree runtime statistics&lt;/strong&gt; sampling for run queue offloading.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Actor registry&lt;/strong&gt; support&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Restart strategy for actors&lt;/strong&gt;:
+    &lt;ul&gt;
+      &lt;li&gt;We have written a restart strategy for actors, so they can be restarted with various backoff strategies like linear, exponential etc.&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;Moreover, if panic or error occurs in your actors, you can define a max restart policy to give up after n attempts, or maybe &lt;a href=&quot;https://url.pet/r9GGm&quot;&gt;you’re never going to give up ?&lt;/a&gt; Maybe you don’t want to restart at all:&lt;/p&gt;
+    &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;c&quot;&gt;// At the beginning we're creating a new instance of RestartStrategy&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;// we then provide a policy and a back-off strategy.&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;restart_strategy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;RestartStrategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// Set the limits for supervisor, so that it could stop&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// after 3 attempts. If the actor can't be started, the supervisor&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// will remove the failed actor from tracking.&lt;/span&gt;
+      &lt;span class=&quot;nf&quot;&gt;.with_restart_policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;RestartPolicy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Tries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// Set the desired restart strategy. By default supervisor will&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// try to restore the failed actor as soon as possible. However,&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// in our case we want to restart with a small delay between the&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// tries. Let's say that we want a regular time interval between the&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;// attempts which is equal to 1 second.&lt;/span&gt;
+      &lt;span class=&quot;nf&quot;&gt;.with_actor_restart_strategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;ActorRestartStrategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LinearBackOff&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from_secs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Adapted NUMA allocator&lt;/strong&gt; to latest Alloc API to make use of it easily with Bastion.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;whats-on-our-roadmap&quot;&gt;What’s on our roadmap?&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Bastion&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Management subtrees of actors in runtime&lt;/li&gt;
+      &lt;li&gt;Local and shared state API for actors&lt;/li&gt;
+      &lt;li&gt;Link and Monitor implementations&lt;/li&gt;
+      &lt;li&gt;Refactoring the msg! macro&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Alcazar&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Implement an early prototype of web framework based on top of the existing Bastion codebase. The goal is to expose a simple web api to send / receive messages to a Bastion.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;wanna-join-us&quot;&gt;Wanna join us?&lt;/h3&gt;
+
+&lt;p&gt;We are working a lot towards letting Bastion become a prominent runtime, and help rustaceans build scalable and reliable distributed applications.&lt;/p&gt;
+
+&lt;p&gt;We are looking for maintainers who will:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Simplify the code and guide the development&lt;/li&gt;
+  &lt;li&gt;Develop distributed operations&lt;/li&gt;
+  &lt;li&gt;Triage and help Prioritizing bugs/feature requests&lt;/li&gt;
+  &lt;li&gt;Develop new features or help with optimizations and refactoring&lt;/li&gt;
+  &lt;li&gt;Make documentation and infrastructure shine&lt;/li&gt;
+  &lt;li&gt;Join the fun and hang out with us!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you are interested in these topics above and want to deep dive into Rust. This is a good start.
+This project and other crates that will be developed around with this project will reside under &lt;a href=&quot;https://github.com/bastion-rs/bastion&quot;&gt;Bastion RS&lt;/a&gt;.
+Looking forward to hearing from future contributors!&lt;/p&gt;
+
+&lt;h3 id=&quot;we-need-your-support&quot;&gt;We need your support!&lt;/h3&gt;
+
+&lt;p&gt;We would love to invest into better testing on different platforms and architectures, verification, and constant improvement in our infrastructure and nourish the Rust ecosystem with a new approach for applications.&lt;/p&gt;
+
+&lt;p&gt;All contributors are dedicating their free time and trying to get the most of it at a continuous pace. But good mood and a cheerful team only got us so far. We unfortunately don’t have enough funding at the Bastion project and all projects under it at the moment.&lt;/p&gt;
+
+&lt;p&gt;Since the beginning of the project we have collected 35$ total. This is why kindly ask you to consider supporting us on &lt;a href=&quot;https://opencollective.com/bastion&quot;&gt;https://opencollective.com/bastion&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We are also considering other approaches like providing consulting and integration advice, and advanced support features that will allow us to get feedback and spend more time making Bastion the best framework for distributed systems out there.&lt;/p&gt;
+
+&lt;p&gt;If you are currently using bastion in your company, or if you’re considering using it in production, please reach out to us!&lt;/p&gt;
+
+&lt;p&gt;If you (use Bastion and project ecosystem/considering using Bastion/want to help to project to get going), please consider donating over our OpenCollective. All these features mentioned above prepped in a long time, and we want to do more together with you!&lt;/p&gt;
+
+&lt;p&gt;If we start getting enough funding, we will begin writing posts about where the money goes and what we built with it!&lt;/p&gt;
+
+&lt;p&gt;If you have any questions or would like to have a chat with us, don’t hesitate to reach out to the Bastion team on &lt;a href=&quot;https://github.com/bastion-rs&quot;&gt;Github&lt;/a&gt;, &lt;a href=&quot;https://twitter.com/bastion_rs&quot;&gt;Twitter&lt;/a&gt;, and &lt;a href=&quot;https://discord.gg/HvdUXX&quot;&gt;Discord&lt;/a&gt;!&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 21 Jul 2020 00:00:00 +0200</pubDate>
+        <link>http://localhost:4000/2020/07/21/celebrate-first-bastion-aniversary-with-release.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/07/21/celebrate-first-bastion-aniversary-with-release.html</guid>
+        
+        
+      </item>
     
       <item>
         <title>Bastion floating on Tide - Part 2</title>
