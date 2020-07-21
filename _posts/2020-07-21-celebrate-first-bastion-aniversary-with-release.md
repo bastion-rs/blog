@@ -21,7 +21,7 @@ Bastion is a distributed runtime which is inspired from the design principles of
 This release is coming with exciting features:
 
 - **Agnostik executor runtime**
-    - With Agnostik, Bastion can run on any runtime. Head over to the \[agnostik project\](https://github.com/bastion-rs/agnostik/) for more information.
+    - With Agnostik, Bastion can run on any runtime. Head over to the [agnostik project](https://github.com/bastion-rs/agnostik/) for more information.
 
 
 - **Nuclei, an agnostic proactive IO system**
@@ -157,5 +157,4 @@ If you (use Bastion and project ecosystem/considering using Bastion/want to help
 
 If we start getting enough funding, we will begin writing posts about where the money goes and what we built with it!
 
-If you have any questions or would like to have a chat with us, don't hesitate to reach out to the Bastion team on [Github](https://github.com/bastion-rs), [Twitter](https://twitter.com/bastion_rs), and [Discord](https://discord.gg/HvdUXX)!
-
+If you have any questions or would like to have a chat with us, don't hesitate to reach out to the Bastion team on [Github](https://github.com/bastion-rs), [Twitter](https://twitter.com/bastion_rs), and [Discord](https://discord.gg/VPCWG7)!
