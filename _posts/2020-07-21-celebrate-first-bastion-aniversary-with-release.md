@@ -20,7 +20,7 @@ Bastion is a distributed runtime which is inspired from the design principles of
 
 This release is coming with exciting features:
 
-- **Agnostik** executor runtime
+- **Agnostik executor runtime**
     - With Agnostik, Bastion can run on any runtime. Head over to the \[agnostik project\](https://github.com/bastion-rs/agnostik/) for more information.
 
 
@@ -33,7 +33,7 @@ This release is coming with exciting features:
         - It will power Bastion’s IO system and ecosystem.
 
 
-- **Autoscaling feature** for actors
+- **Autoscaling feature for actors**
     - Right now with the `scaling` feature enabled, you can create actor groups in Bastion that will adapt to incoming workload according to given resizer parameters.
     - Example construction is like:
 ```rust
@@ -68,7 +68,7 @@ This release is coming with exciting features:
     - Right now you can get the names of the child in children groups. This is very handy when logging for example.
     - With this enabled everything is user readable content addressable in Bastion runtime.
 
-- **Heartbeat** for children
+- **Heartbeat for children**
     - The bastion runtime continuously watches children with heartbeat to check their status and do sampling over their internals.
     - This feature doesn’t require any feature flags.
     - It is shown in the scaling example seen above:
@@ -86,7 +86,7 @@ This release is coming with exciting features:
 
 - **Lockfree runtime statistics** sampling for run queue offloading. 
 
-- **Actor registry** support
+- **Actor registry support**
 
 - **Restart strategy for actors**:
     - We have written a restart strategy for actors, so they can be restarted with various backoff strategies like linear, exponential etc.

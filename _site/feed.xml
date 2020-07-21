@@ -6,8 +6,8 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 21 Jul 2020 16:31:07 +0200</pubDate>
-    <lastBuildDate>Tue, 21 Jul 2020 16:31:07 +0200</lastBuildDate>
+    <pubDate>Tue, 21 Jul 2020 18:10:15 +0200</pubDate>
+    <lastBuildDate>Tue, 21 Jul 2020 18:10:15 +0200</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -27,7 +27,7 @@
 &lt;p&gt;This release is coming with exciting features:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Agnostik&lt;/strong&gt; executor runtime
+  &lt;li&gt;&lt;strong&gt;Agnostik executor runtime&lt;/strong&gt;
     &lt;ul&gt;
       &lt;li&gt;With Agnostik, Bastion can run on any runtime. Head over to the [agnostik project](https://github.com/bastion-rs/agnostik/) for more information.&lt;/li&gt;
     &lt;/ul&gt;
@@ -45,7 +45,7 @@
       &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Autoscaling feature&lt;/strong&gt; for actors
+  &lt;li&gt;&lt;strong&gt;Autoscaling feature for actors&lt;/strong&gt;
     &lt;ul&gt;
       &lt;li&gt;Right now with the &lt;code class=&quot;highlighter-rouge&quot;&gt;scaling&lt;/code&gt; feature enabled, you can create actor groups in Bastion that will adapt to incoming workload according to given resizer parameters.&lt;/li&gt;
       &lt;li&gt;Example construction is like:
@@ -87,7 +87,7 @@
       &lt;li&gt;With this enabled everything is user readable content addressable in Bastion runtime.&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Heartbeat&lt;/strong&gt; for children
+  &lt;li&gt;&lt;strong&gt;Heartbeat for children&lt;/strong&gt;
     &lt;ul&gt;
       &lt;li&gt;The bastion runtime continuously watches children with heartbeat to check their status and do sampling over their internals.&lt;/li&gt;
       &lt;li&gt;This feature doesn’t require any feature flags.&lt;/li&gt;
@@ -112,7 +112,7 @@
     &lt;p&gt;&lt;strong&gt;Lockfree runtime statistics&lt;/strong&gt; sampling for run queue offloading.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Actor registry&lt;/strong&gt; support&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Actor registry support&lt;/strong&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;Restart strategy for actors&lt;/strong&gt;:
     &lt;ul&gt;
