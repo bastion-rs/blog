@@ -3,8 +3,8 @@
 This is the code that powers [the bastion-rs blog]. It is running
 on [GitHub pages].
 
-[the bastion-rs blog]: https://blog.bastion.rs
-[GitHub pages]: https://pages.github.com/
+[the bastion-rs blog]: https://blog.bastion-rs.com
+[github pages]: https://pages.github.com/
 
 This project has been forked from [the blog boilerplate](https://github.com/rust-community/rust-lang-blog-boilerplate), which has been forked from the awesome [github repo](https://github.com/rust-lang/blog.rust-lang.org) of the [RustLang blog](https://blog.rust-lang.org/)
 
@@ -30,7 +30,7 @@ The site should be running on [localhost:4000](http://localhost:4000)
 ## License
 
 The Rust Programming Language Blog is primarily distributed under the terms of
-CC-BY 4.0. 
+CC-BY 4.0.
 So is this project.
 
 See LICENSE for details.
