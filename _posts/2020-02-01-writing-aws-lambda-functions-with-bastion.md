@@ -11,18 +11,21 @@ In this post, we will look how AWS Lambda Functions can be implemented using Bas
 Let's start! We are going to use the [Bastion AWS Lambda Example](https://github.com/bastion-rs/showcase/tree/master/bastion-aws-lambda) in our showcase repo.
 
 First let's clone the Bastion showcase repository:
+
 ```bash
 $ git clone git@github.com:bastion-rs/showcase.git
 ```
 
 Get into the containing directory of our example lambda declaration:
+
 ```bash
 $ cd showcase/bastion-aws-lambda
 ```
 
-We are using `serverless` utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by `serverless.yml`. The `serverless invoke local` command we will run needs to build a Docker container, so keep in mind you need to run Docker for this example to work locally. 
+We are using `serverless` utility to leverage compilation and configuration of our lambda. In this directory you will see how our lambda is configured by `serverless.yml`. The `serverless invoke local` command we will run needs to build a Docker container, so keep in mind you need to run Docker for this example to work locally.
 
 In order to install `serverless` and its dependencies for Rust environment we will do:
+
 ```bash
 $ npm i
 ```
@@ -49,7 +52,7 @@ struct OutputPayload {
 
 When we process sites and receive body of the sites we are going to return the lambda status. Think that these are the cluster internal applications which we concurrently trigger their endpoints. Instead of sites you can use your cluster internal naming.
 
--------
+---
 
 ### Message Handler (Dispatcher)
 
@@ -99,6 +102,7 @@ let (p, mut c) = unbounded::<bool>();
 ```
 
 We are creating a children group to setup workers and fan out requests to workers. So we will make our workers run individually:
+
 ```rust
 let workers = worker_pool(payload.sites.len());
 ```
@@ -128,7 +132,7 @@ Our workers are sending back the body. Even though we are not using it we wait f
 
 After these explanations for the `dispatcher`. Let's take a look at the workers:
 
--------
+---
 
 ### Worker Actors
 
@@ -168,6 +172,7 @@ children
 ```
 
 Then we are giving the actor body:
+
 ```rust
 .with_exec(move |ctx: BastionContext| {
     async move {
@@ -193,7 +198,7 @@ In this body you might have realized that we receive messages with **[msg!](http
 
 Oh yes, we are using [surf](https://docs.rs/surf/1.0.3/surf/) to issue our call. and returning the response with our `answer!` macro.
 
--------
+---
 
 ### Application's Main
 
@@ -216,12 +221,13 @@ That's all we have inside the code. For more information take a look at to our *
 ### Testing locally
 
 For testing locally what we need to do is:
+
 ```bash
 $ ./node_modules/.bin/serverless invoke local -f page_fetcher -d \
     '{
       "sites": [
-        "https://bastion.rs",
-        "https://blog.bastion.rs",
+        "https://www.bastion-rs.com",
+        "https://blog.bastion-rs.com",
         "http://google.com",
         "https://docs.rs/",
         "https://crates.io/",
